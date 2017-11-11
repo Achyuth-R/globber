@@ -1,0 +1,1825 @@
+LiveCode Lessons  10/2016  [updated for LC v8]
+Condensed/edited from LiveCode.com Lessons
+ctrl-f to find
+---------------------------------
+
+Lesson 1   Getting Started
+Lesson 2   Objects And Components
+Lesson 3   Files And Folders
+Lesson 4   Geometry Manager
+Lesson 5   Internet Images
+Lesson 6   Groups: Same Controls On Multiple Cards
+Lesson 7   Date And Time
+Lesson 8   Message Box
+Lesson 9   Thumbnail Image For Button
+Lesson 10   Embed An Image In A Stack
+Lesson 11   Progress Bar
+Lesson 12   Arrays 
+Lesson 13   Add/Delete Keys Of An Array
+Lesson 14   Sort An Array
+Lesson 15   Tab Buttons
+Lesson 16   Create A Modal Dialog
+Lesson 17   Modal Dialog Data
+Lesson 18   Custom Properties
+Lesson 19   Answer File With Type
+Lesson 20   Display An Image Dragged To A Stack
+Lesson 21   Proportionally Resize An Image
+Lesson 22   Tab Delimited Text In A Field
+Lesson 23   Array In A Table Field
+Lesson 24   Adding Images To Fields
+Lesson 25   Play Sounds
+Lesson 26   Graphic Effects For An Object
+Lesson 27   Skin A Stack With A Window Shape
+Lesson 28   Window Tricks
+Lesson 29   Process A Binary File
+Lesson 30   Print Cards To A PDF
+Lesson 31   Save Data In A Standalone Application
+Lesson 32   Link Text
+Lesson 33   Table In A Text Field
+Lesson 34   Read Data From An XML File
+Lesson 35   Create A Data Grid Table
+Lesson 36   Create A Data Grid Form
+Lesson 37   Checkbox In A Data Grid Form
+Lesson 38   Scroll An Image
+Lesson 39   Store/Retrieve An Array In A Text File
+Lesson 40   Android Developer On Windows
+Lesson 41   Android Location
+Lesson 42   Android Move Input Field Away From Keyboard
+Lesson 43   Unicode
+Lesson 44   Modify The Message Pathway
+
+----
+Lesson 1
+Getting Started
+
+This tutorial will give you an overview of the objects and components you will use when building applications. It describes how to place and manipulate objects in your application as well as explaining the inner workings of LiveCode. This knowledge will help you build efficient applications quickly.
+
+Stacks, Cards and Objects
+Applications in LiveCode are known as stacks and the separate screens which make these up are called cards. A stack can contain any number of cards and may also contain substacks. The substacks will generally provide specialist actions or implement specific parts of your application.
+
+Objects can be placed on cards by dragging them from the Toolbar (which is shown on the left). Once an object has been placed on a card it can be moved around by further drag and drop actions or by using the objects property Inspector.
+
+The Toolbar
+The toolbar contains all the objects you would normally expect to use in an application, such as buttons, text fields and scrollbars. It also provides the main method of switching between edit and run modes, which are the two modes which LiveCode operates in. When in edit mode objects can be placed on the cards, resized and edited. When in run mode no editing can take place but objects can be clicked and results observed.
+
+Object Properties
+Every object in LiveCode has associated properties which specify how it looks and behaves. These can be altered when LiveCode is in edit mode and the easiest way to do this is using the properties Inspector. This can be opened by selecting the object and clicking the inspector button on the menu bar, by right clicking the object and selecting Property Inspector from the resulting menu, or double clicking the object.
+
+The Properties Inspector
+The Properties Inspector displays all of the object's properties, from its name and title to its display settings. The best way to find out what a property does is to create a stack and alter its settings, observing the results. Some of the more important features however are summarised below.
+
+The Lock Palette
+This locks the properties Inspector to the current object. If you request to see a different object's properties a new Inspector will be opened, thus allowing you to view multiple object's properties at once.
+
+The Selection Menu
+The selection menu lets you choose which object's properties you want to view. When clicked it will bring up a list which contains all the objects in your current application. When you select one of these the properties Inspector will update to show that object's properties.
+
+The Geometry Manager
+The Geometry Manager is used to specify how objects should act when the stack they are contained within is resized. It lets you specify links between the selected object and either the side of the stack or another object within it. These links control how the selected object will resize and reposition itself when the stack size itself is changed. The links can be either relative or absolute, meaning that the selected object will always be a set number of pixels away from the other object or a set percentage away.
+
+Writing Scripts
+Once an object has been created and assigned properties its behaviour can be specified by giving it a script.
+
+Scripts in LiveCode send and handle messages which control actions. Some messages, such as mouseUp, are sent automatically by the system while other user messages, are sent by making what is equivalent to a method call. The messages an object sends and how it handles them specify how it reacts to events and generally behaves.
+
+Within LiveCode all scripts are written in the script editor. The easiest way to view this is to ensure the object whose script you want to edit is in focus and then click the script button on the menubar. Alternatively the object can be right-clicked and the 'edit script' option can be chosen from the menu which appears. Ctrl-Alt-click for object's script.
+
+Messages and the Message Path
+All messages sent in LiveCode are passed along a message path until a handler for the message is found. The path contains any scripts which have permission to deal with the message being passed and consists of two sets of system scripts and any user scripts which are related to the object which sent the message. The order of the path is fixed to control who/what gets access to the message first and ensures standard behaviour is adhered to.
+
+Message path: system front scripts (user noneditable) > object's script >  object's group script > card script > stack script > system back scripts (user editable) > error msg.
+
+The Application Browser
+In order to see the path which a message will take through the user scripts the Application Browser can be used. This displays a list of stacks and any cards, substacks, groups or objects which are placed within them.
+
+All the stacks are displayed in the left-hand column and can be expanded to show the substacks and cards they include. When a card within the stack is clicked its contents are displayed in the right-hand column of the Application Browser. Every object on the card will be displayed as well as details of what it is, whether it is visible, whether it can be selected, the layer it is on and how many lines of script it has. If you want to view the system scripts as well as the user scripts in the Application Browser you should select LiveCode UI Elements in List from the View menu.
+----
+
+Lesson 2
+Objects And Components
+
+This lesson will give you an overview of the objects and components you will use when building LiveCode applications. We will cover the basics of adding objects to your application, using LiveCode to add script to your controls and give you an overview of the inner workings of LiveCode so you can make a start on your own applications.
+
+Starting up LiveCode
+When you start LiveCode you will see the menu bar and tools palette at the top of the screen. The menu bar and toolbar give you access to all the things you would expect: new files, saving, script editors, as well as useful resources including the dictionary. The tools palette allows you to add controls to your application and switch between "edit" and "run" modes.
+
+Stacks and cards
+Applications in LiveCode are known as stacks and the separate screens which make these up are called cards. A stack can contain any number of cards and may also contain substacks. The substacks will generally provide specialist actions or implement specific parts of your application.
+
+Your first stack
+We need a stack so we can start building our application. Go to the File menu and select New Mainstack. We now have a stack containing a single card.
+
+Run and Edit mode
+Use the tools palette to switch between run and edit modes. When in edit mode, objects can be placed on the cards, resized, and edited. When in run mode, no editing can take place but objects can be clicked and results observed.
+
+Adding controls to the stack
+To add controls to the stack you drag the type of control you want from the tools palette and place it on your card. Lets add a basic field and button to our card. Select the field on the tools palette and drag it to your card, then do the same with the button.
+
+Object properties 
+Every object in LiveCode has associated properties which specify how it looks and behaves. These can be altered when LiveCode is in Edit mode and the easiest way to do this is using the properties Inspector. This can be opened by selecting the object and clicking the Inspector button on the menu bar. Alternatively you can open the properties Inspector by right clicking the object and selecting properties Inspector from the resulting menu or, alternatively, by double clicking the object itself.
+
+The Properties Inspector
+The properties Inspector displays all of the object's properties, from its name and title to its display settings. You can use the properties Inspector to change the properties of an object. The best way to find out what a property does is to try changing it and see what happens. Hovering over an option in the properties Inspector will tell you the property name which you can look up in the dictionary if you want to find out more. Here I have renamed the button to be called "Say Hello".
+
+Adding scripts to controls 
+If we want our application to do anything we need to start adding some LiveCode. Once an object has been created and assigned properties its behaviour can be specified by giving it a script.
+
+Within LiveCode all scripts are written in the script editor. The easiest way to view this is to select the object you want to edit and then click the script button on the menubar. Alternatively the object can be right-clicked and the edit script option can be chosen from the menu which appears.
+
+Scripts in LiveCode send and handle messages which control action. Some messages, such as mouseUp, are sent automatically by the system while other, user messages, are sent by making what is equivalent to a method call. The messages an object sends and how it handles them specify how it reacts to events and generally behaves.
+
+In this case we want something to happen when the button is clicked. The mouseUp message is sent automatically when the mouse button is clicked and released so we add the script for whatever action we want to take to the mouseUp handler. Here we want to say hello so our script is:
+
+on mouseUp
+  put "Hello World" into field 1
+end mouseUp
+
+Testing our script
+To test our script and see what happens we need to switch to run mode and click on the button... and "Hello World" appears in the field.
+
+Messages and the Message Path
+When a message is sent to an object, it is often handled directly by a message handler in that object. However if no handler is present, the message will continue along a path until it finds a message handler that can respond to it. This makes it possible to group similar functionality together at different levels within your application. This behavior applies both to event messages sent as a result of a user action, and custom messages sent by script. It is therefore possible to write libraries of common functions.
+
+The object hierarchy is closely related to the path that a message travels on. In most cases, when an object passes a message on, the message goes to the object's owner in the object hierarchy.
+----
+
+Lesson 3
+Files And Folders
+
+A very common task when writing a program is to get a list of files or folders and either display it for the user to choose one, or go through each file or folder and perform some action. This basic tutorial shows some simple algorithms to list and sort files and gives some hints on the relevant LiveCode commands used.
+
+Getting a list of files or folders
+Use the files() or folders() functions to return a line list of files or 1st level folders in the defaultFolder or a specific folder.
+
+set the defaultFolder to specialFolderPath("desktop")
+put files() into tList  --line list of files in default folder
+filter tList without "."
+filter tList without ".."  --remove unnecessary files
+
+put files(specialFolderPath("documents")) into tList  --line list of files in specific folder
+filter tList without "."
+filter tList without ".."  --remove unnecessary files
+filter tList with ".livecode"  --keep LC stacks
+sort lines of tList international
+----
+
+Lesson 4
+Geometry Manager
+
+The Geometry Manager adjusts the way controls are scaled or repositioned when the stack is resized. Access the geometry manager tab in the properties Inspector by double-clicking the object.
+
+Objects can have either their scale or position adjusted upon a stack resize.
+
+* Scale
+Select "Scale" option.  A single click on the resize bar will turn it to a solid red absolute link, a second click will turn it to a red wave relative link for centering. The absolute link will keep the desired edge of the object a fixed number of pixels away from the stack edge or linked object by stretching or reducing the object's size. The red wave relative link will keep the desired edge a percentage of the total width/height of the stack away from the stack edge or linked object.
+
+To prevent text clipping in a field or object with text during stack resizing, select the "Prevent object clipping text" option. This will preserve a minimum size at which all the text contents can be displayed, no further reduction in size will occur.
+
+Selecting the horizontal or vertical scrollbar options instead of having a minimum size, the stack will continue to reduce in size until vertical and horizontal scrollbars are generated that allow all the text to remain viewable.
+
+If you would prefer to manually set a minimum or maximum size for an object, use the "Limit object" option, which specifies a minimum/maximum height or width at which the object will cease to be resized.
+
+* Position
+Select the "Position" option. Each object can have its position adjusted relative to either another object within the same card or the edge of the stack. The horizontal adjustment is controlled by the two black bars to the right of the "Selected Object" button in the centre of the linking area. The uppermost bar controls positioning relative to the stack edge and the lower of the two bars controls positioning relative to another object.
+
+A bar in the black state will do nothing to either position or resize the selected option. Clicking on the bar once will turn it to a red absolute link (object remains a fixed number of pixels from the stack edge). Clicking on the bar a second time will turn it into a red wave relative link for centering (object remains a percentage of the cards total width away from the stack edge). A centered object will remain centered when the stack is resized.
+
+Position an object relative to another object with the drop down box attached to the shorter of the two bars. The menu contains a list of all the objects on the current card. The absolute or relative link you then set will be maintained relative to the selected objects position rather than the stack edge.
+
+The final option, "Remove All" will remove all geometry settings that have been applied to the selected object.
+
+General Tips
+• If there is a resizeStack handler in your stack, you will need to pass the resizeStack message at the end of the handler in order to make the geometry manager work. 
+• Force the geometry manager to manually update with the revUpdateGeometry command. 
+• Use the Geometry Manager to scale objects with a divider bar. Link the edges of the controls to the divider bar, add a script in the divider to move in response to a mouse action, then call revUpdateGeometry each time it moves to have the objects scale automatically. 
+• Setting a minimum height and width for your stack in the size & position section of the properties Inspector can prevent overlapping of controls when the stack becomes too small.
+----
+
+Lesson 5
+Internet Images
+
+Insert internet image onto a card
+Set the fileName of your image to the URL of the image file on the internet. For example, drop an empty image onto a fresh card. Enter this command in the message box:
+
+set the fileName of image 1 to "TheWebAddressToImage.jpg"
+set the fileName of image 1 to "http://freespace.virgin.net/kings.house/image.jpg"
+----
+
+Lesson 6
+Groups: Same Controls On Multiple Cards
+
+This lesson will show you how to share one set of controls across multiple cards (the equivalent of bg btns and bg flds in hypercard). Using the same controls on multiple cards makes it much easier to make changes as you only have to update the controls in one place.
+
+The Stack
+Here is a stack that has two cards. We are currently looking at card 1. Each card displays a single image and needs a navigation control to move to the next card.
+
+on mouseUp X
+  go next cd  --go cd 1  --go cd X
+end mouseUp
+
+The problem is that the navigation control is only on card 1. By navigating to card 2 by selecting the View > Go Next menu item you can see that the navigation controls are not on card 2. The solution is to group the nav control and make it a background.
+
+Group Controls
+With the control selected, Object > Group Selected. This will place all selected controls into a single group. Name the group "MyControl", check "background behavior".
+
+Place Group on Other Cards
+Go to card 2, Object > Place Group > MyControls. Placing a group on a card adds a shared instance of the group to the card rather than making a copy. Now the navigation controls appear on card 2 as well. Any new cards will automatically have the background group placed.
+
+Modify Group
+Since the group is being shared between card 1 and card 2, modifying the group will update it on all cards. For example, if the location of the group is changed on card 2, card 1 will be updated to the new location too. Read up on the backgroundBehavior property in the Dictionary. The backgroundBehavior property of a group affects whether or not it is added to new cards you create and where in the message hierarchy the group's script is placed.
+----
+
+Lesson 7
+Date And Time
+
+LiveCode has built in functions for the date and time, in a range of formats.
+
+Getting the date
+Type into the message box: put the date
+
+Different date formats
+put the long date
+put the abbreviated date
+put the short date
+put the english date
+put the system date
+put the internet date
+
+Converting the date
+You can use the convert command to convert a date between one format and another.
+
+put the short date into Date1
+convert Date1 to long date
+put Date1 into field "FullDate"
+
+Formatting the date yourself
+If none of the built in formats give you what you need then you can format the date yourself using the dateItems, a comma delimited date list.
+year,month(1-12),day,hour(24),minute,second,dayofweek(sun=1)
+
+item1=year,item2=month,item3=day,item4=hour,item5=minute,item6=second,item7=dayofweek. You can then use these items to format your date to display however you want. For example:
+
+get the date
+convert it to dateItems
+put "The current day is" && item 3 of it &return into MyDate
+put "The current month is" && item 2 of it &return after MyDate
+put "The current year is" && item 1 of it after MyDate
+put MyDate into field "Formatted Date"
+
+Getting the time
+The time is almost exactly the same as getting the date:
+
+put the time
+put the long time
+put the abbreviated time
+put the short time
+put the english time
+put the system time
+
+12 and 24 hour time
+For 24 hour time, set the twelveHourTime property to false.
+
+set the twelveHourTime to "false"
+put the time
+
+get the time
+convert it to long time
+put it into field "Converted Time"
+
+Formatting the time yourself
+As with the date you can use dateItems to create a custom time format
+
+get the long time
+convert it to dateItems
+put "The time is" && item 5 of it && "minutes and" && item 6 of it && "seconds past" && item 4 of it into MyTime
+put MyTime into field "Formatted Time"
+----
+
+Lesson 8
+Message Box
+
+The message box can be very useful in assisting stack development. This lesson covers some helpful tips and tricks for getting the most out of the message box.
+
+To show the message box, type command-m (Mac) or control-m (Win), or select "Show Message Box" from the Tools menu.
+
+The message box contains a button row used to access various features. The first two buttons access the message box command line in single command or multi-line script command modes.
+
+* Message Box single command mode.
+The message box allows you to execute transcript commands and immediately view the results. Type the command you wish to execute and return/enter, the results will displayed.
+
+put the short name of this stack
+
+Ctrl-a: shift insert point to start of line
+Ctrl-n: shift insert point to end of line
+Ctrl-u: delete command line text
+RightArrow: accept auto-complete
+UpArrow or DownArrow arrow: cycle through previously executed commands
+Execute multiple commands: separate with ;
+
+
+* Message box multi command mode
+The second tab allows you to execute multi-line commands. Type your commands into the message box, pressing return while you type will not execute your command. Resize the divider bar if you need more space. When you are ready, press Enter or ctrl-returnKey. Most of the time you'll execute one line commands, or you can use the ";" semicolon to concatinate two commands together.
+
+Why use the message box
+1) During development it is helpful to check program logic or debug.
+2) Lock the message box target to target a different stack. Change the target by clicking the lock and choose from available stacks.
+3) Send "mouseUp" to btn "Reset"  --hidden or buried object or handler
+4) set the loc of the selobj to 500,500  --location of selected object
+5) set the loc of the topstack to the mouseloc
+6) edit the script of the mouseStack
+7) View global properties and variables, pending messages, frontscripts, backscripts, stacks in use.
+----
+
+Lesson 9
+Thumbnail Image For Button
+
+Create a 32 x 32 pixel thumbnail image for a control, select the thumbnail source id (ImageID) and a name (NewName):
+
+on CreateThumb ImageID  --create 32x32 image for btn
+  local NewName
+  put "Tmp 1" into NewName
+  repeat while there is an image NewName
+    add 1 to word 2 of NewName
+  end repeat
+  create image NewName
+  set the visible of image NewName to "true"
+  set the resizequality of image NewName to "best"
+  export snapshot from control id ImageID to image NewName as PNG
+  set the width of image NewName to 32  --pixels
+  set the height of image NewName to 32  --pixels
+  --set imagedata to make new size permanent:
+  set the imagedata of image NewName to the imagedata of image NewName
+  copy image NewName  --image into clipboard for pasting
+end CreateThumb
+----
+
+Lesson 10
+Embed An Image In A Stack
+
+This lesson will show you how to directly embed an image into a stack so that the original image file is no longer needed.
+
+Import image file as a control
+Open your stack and display the card you wish to import the image into. Import image: File > Import as Control > Image File. A control is any object that can be placed on a card such as a button, field or image. These objects are stored as part of the stack and are incorporated into the standalone application file.
+
+Adjust the image position and size
+Use the selection handles to move and resize the image, or right click the image to change its properties. Once the stack is saved the image will become part of the stack, and will stay in the stack even if the original image file is moved or deleted. Set the lockLoc property of the image to "true" in its properties inspector to preserve a resized images new dimensions. 
+----
+
+Lesson 11
+Progress Bar
+
+Introduction
+Progress bars are used to illustrate the progress of an action, such as file transfers. This is an example of a progress bar updating during the import and export of a file.
+
+The progress bar properties go from 0 to 65535, with a current value of 13107. To make it easier to grasp, change the end value to 100 and current value to 0, to think in percentages. 
+
+Using file size and the amount of data read, a % read value can be used to set the progress bar. This is usually placed in a repeat loop.
+
+repeat
+   set the thumbPosition of scrollbar "Progress Scrollbar" to (tAmountRead/tFileSize)* 100  --% of total
+end repeat
+set the thumbPosition of scrollbar "Progress Scrollbar" to "100"  --done
+
+set the thumbPosition of scrollbar "Progress Scrollbar" to (tLineCounter/tNumLines)* 100  --another possibility
+----
+
+Lesson 12
+Arrays 
+A variable that holds more than one value is called an array, and each of the values it holds is called an element. Each element has its own name, called the element's key.
+ 
+Specify an element of an array variable by using the variable name along with the element's key enclosed in square brackets. The key may be a name, number or variable. A key that's not a number or variable is enclose quotes.
+ 
+put "ABC" into MyArray["Key1"]
+--array = MyArray
+--element = "ABC"
+--element key = "Key1"
+ 
+Use any element of an array variable in the same way you use any variable: put data into or before or after an element, and find out what data it contains.
+
+Array elements may contain nested or sub-elements, making them multi-dimensional. Elements may be nested within themselves to any number of levels. This type of array is ideal for processing hierarchical data structures such as trees or XML. To access a sub-element, declare it using an additional set of square brackets. 
+ 
+put "ABC" into MyArray["Key1"]["Key1Sub"]
+
+Delete Elements In An Array 
+The delete variable command removes one element from an array, but not the array or any of its other elements. To delete an element, you specify both the array and the element's key: 
+ 
+delete variable MyArray["Key1"]  --delete element of Key1
+put empty into MyArray["Key1"]  --delete contents of element of Key1, but not the element itself.
+
+List Elements In An Array 
+The keys function returns a line list of elements in an array.
+ 
+put keys() of MyArray into ListOfElements  --line list of element key names
+put keys() of MyArray["Key1"] into ListOfSubElements  --line list of subelement key names in element of Key1.
+ 
+Text List To Array Using Split Command
+The split command separates a text list into elements of an array. You can 
+specify what delimiting character in the list you want the data to be split by. The data will be converted into a set of elements named according to where it is split.
+
+put "A Apple,B Banana,C Carrot" into MyVariable 
+split MyVariable by comma and space  --comma separates elements into lines (first word becomes key name), space separates contents of each element.
+ 
+Resulting array: A, B, C are key names. Apple, Banana, Carrot are contents of each element.
+ 
+Array To Text List Using Combine Command
+The combine command combines the elements of an array into a single text list variable. After the command is finished executing, the array no longer exists. 
+ 
+combine MyVariable using comma  --comma separates contents of each element, key names are lost.
+put MyVariable  --Apple,Banana,Carrot
+----
+
+Lesson 13
+Add/Delete Keys Of An Array
+
+Create an array, add element keys to it, and delete keys from it.
+
+What is an array?
+An array is a variable that holds more than one value. Each of the values in the array is called an element and each element has a name, or key, which is used to access it.
+
+There is more than one way to create an array. Use the split command to turn a text list into an array, or add individual elements. In this lesson we will add individual elements.
+
+Create an array
+
+local tArray
+put "Miller" into tArray["Kevin"]  --key Kevin, value Miller
+put "Beaumont" into tArray["Benjamin"]
+put "Kenyon" into tArray["Oliver"]
+put "Buchanan" into tArray["Elanor"]
+
+View the array in the variable watcher
+View the contents of our array in the variable watcher with the keys on the left and values on the right.
+
+Deleting entire element from an array
+Now, what if you want to completely remove an element from an array? That is the key and the value. You can do this using the delete variable command.
+
+delete variable tArray["Elanor"]
+This deletes the entire element with the key "Elanor".
+
+Deleting the value (contents) of an element from an array
+Delete the value without deleting the key by setting the value of the element to empty.
+
+put empty into tArray["Elanor"]
+This deletes the contents of the element preserving the key "Elanor".
+----
+
+Lesson 14
+Sort An Array
+
+This lesson describes a method to sort arrays and how to use it in your code, moving from a specific case to a more general form.
+
+Introduction
+A common task performed by computer applications is to take an array of items and sort them into a more useful or presentable order, for instance ordering the entries in an address book alphabetically so that the user will be able to find a particular entry quickly. A sorted array also has the advantage that searches can be performed very quickly by using a boolean search which can eliminate half of the possible matches at each step.
+
+Sorting arrays by sorting keys
+Arrays are more than simple numerically indexed lists of values. The entries in an array can also be stored and referenced using key values containing text strings, and the mapping of each key to each entry can convey more meaning than just the order of the elements, which simply reordering the entries in the array would disrupt.
+
+One method of ordering the entries is to sort the keys of the array:
+
+local tArray  --create array
+put "Miller, Kevin" into tArray[1]
+put "Beaumont, Benjamin" into tArray[2]
+put "Kenyon, Oliver" into tArray[3]
+put "Macphail, Ian" into tArray[4]
+put "Papaturno, Tio" into tArray[5]
+get keys() of tArray
+sort lines of it by tArray[each]  --sorts values of keys, A-Z
+split it by return  --create new array of sorted values
+
+How this works
+The "sort lines of [list] by [expression]" form of the sort command allows us to specify an expression to produce a value which acts as a stand-in for each line being sorted. In the above example, rather than directly compare the values of each key, we are comparing the values of the array entry for that key. The sorted keys are then split to create a new array which maps each position in an ordered array to the entry in the original array at that position.
+
+Creating a new sorted array
+The mapping array can be used to create a new array with the entries of the original, but in sorted order. Loop over the elements of the map to fetch each entry in turn and place it into the appropriate position in our new array:
+
+local tSortedArray, tNextIndex
+put 0 into tNextIndex
+repeat for each element i in it
+  add 1 to tNextIndex
+  put tArray[i] into tSortedArray[tNextIndex]
+end repeat
+
+Writing an array sort function
+
+function sortArray pArray  --sort an array by key
+local tSortedArray, tNextIndex
+get keys() of pArray
+sort lines of it by pArray[each]  --sort values of keys, A-Z
+split it by return
+put 0 into tNextIndex  --keys are 1,2,3,...n
+repeat for each element i in it  --create new sorted array
+  add 1 to tNextIndex
+  put pArray[i] into tSortedArray[tNextIndex]
+end repeat
+return tSortedArray
+end sortArray
+
+So anywhere that we need to sort an array we can do the following:
+put sortArray(tArray) into tNewArray
+----
+
+Lesson 15
+Tab Buttons
+
+ Upon completion of this tutorial, you should be able to: 
+• Create a tabbed button.
+• Add one or more additional tabs.
+• Change the name of the tabs.
+• Script navigation between cards using selectedText().
+• Change content using menuPick and hide/show.
+• Reset the tabbed button to its initial state using menuHistory.
+
+Creating Stack and Tabbed Button
+1) Create a new stack, name it, and save it.
+2) Create a tabbed button control by either double-clicking the tabbed button tool on the Tools palette or click-dragging it to your stack.
+
+Changing Tab Attributes
+3) To add tabs and change their text: Object > Object Properties, or double-click the button. This brings up the object Inspector where you can change the default text for the tabs as well as add additional tabs.
+
+Rename Tabs 1, 2 & 3 to "Introduction", "Characters" and "Weapons" and add a fourth tab, "Spells". 
+
+A tabbed button can be used  to navigate cards, or to change info on a card with the hide/show commands. We'll start by demonstrating how to use a tab to navigate between cards. 
+
+Scripting the Tabbed Button to Navigate Between Cards
+4) The reason for changing the names of the various tabs is to make them match the names of the new cards we will be creating. We'll be creating a one-to-one correspondence between the card's name and the tab's name. This isn't essential, but allows a much shorter script. Open the script window of your tab by clicking on the tab, Object > Object Script, and enter:
+
+on mouseUp            
+    get selectedText() of me -- user's choice                                 
+    go card it    -- name of tab = name of card
+end mouseUp
+OR
+on mouseUp                                             
+    go card value(selectedLine() of me)    -- name of tab = name of card
+end mouseUp
+
+Giving the Tabs a Background Behavior as a Group of One
+Wouldn't it be nice to do this just once, instead of doing it on each and every card? To make this possible, we'll create a group of this tab button and give it background behavior so that it will appear on all subsequently-created cards. 
+
+5) Select the tab button (if it is not already selected) using the selection tool/author mode on the Tools Palette (the arrow with the little crosshairs). Once it has been selected, turn it into a group by performing the menu command Object > Group Selected. 
+
+6) Now it is time to give it background behavior so that it will appear on all subsequently-created cards in the stack. To do so, we need to access its properties by using the menu command Object > Object Properties. Give the group some sort of obvious name other than "group ID 1004" and, secondly, we should check the box marked "Behave like a background". This latter action will ensure that all subsequently-created cards will have this tabbed button/control automatically placed upon it. Place a field object on this card and enter some information.
+
+Creating the Appropriately-named Cards
+7) Now we will give a name to this card. Let's name this card identical to that of the first tab, namely, Introduction. To change the name of the current card, perform the menu command Object > Card Inspector and, from there, change the name of the current, only, first card to Introduction. 
+
+Now we are ready to create the cards that will contain our hypothetical character, weapons and spells information cards. 
+
+8) To create an additional three cards (for a total of four: one for each tab), perform the menu command Object -> New Card; do this a total of three times. When you have finished, your stack will display card 4 (all of which should contain your tab button!). 
+
+9) Here we will repeat instruction #7 to name each card to create a correlation between the tabs themselves and the cards to which they navigate. While we could just use a go to card 1 etc. or a go to card id 1002, it is often easier to simply rename each of the cards so that the name will match (or, at least, be named with an obviously correlating name). Give each of your four cards the same name as the corresponding text in the tab button tabs (card 1 = "Introduction", card 2 = "Characters", 3 = "Weapons", 4 = "Spells").
+
+Using Tabs on a Single Card to Hide/Show Content
+The previous instructions demonstrated how to use a tabbed button control to navigate between cards to show content. This section will demonstrate how to use a tabbed control on a single card to hide/show appropriate content.
+
+1) To do so, create a substack of your current mainStack by performing the menu command File > New Substack of "the name of your mainstack". On Card 4 (Spells) of your mainstack, create a button and give it the name "Tabs on a single card" or some such thing. Decide what you are going to name your new substack. Name it by performing the menu command Object > Stack Inspector when the current focus is your substack. I've titled mine, Tabs_on_Single_Card. Switch the focus back to your mainstack by clicking on it, then assign the following script to your button by clicking on the new button and performing the menu command Object > Object Script: 
+
+on mouseUp
+    go stack "Tabs_on_Single_Card"
+end mouseUp
+
+This will open your new substack when you/the user clicks on the button on Card 4. 
+
+2) Now switch to your new substack and create a tabbed control there. Create two or more groups of objects (such as radio buttons or checkbox buttons or images or text fields) and give those groups names that correspond to the two or more tabs you created for this stack. Since this stack will use the tab button to hide and show groups of content on a single card (as opposed to navigating to particular cards in a stack), we won't need to group the tabbed button control.
+
+3) Give your tabbed button the following script:
+
+on menuPick theItem,previousTab
+    show group theItem
+    hide group previousTab
+end menuPick
+
+Resetting a Tab to its Initial Selection
+4) If you wish for the default presentation of the tabbed button to be the first tab or selection, you will need to insert a preOpenStack script in the main stack, which sets the menuHistory property of the button. You can do this by performing the menu command Object > Stack Script and entering the following script into the script editor:
+
+on preOpenStack  --reset tab button
+    set the menuHistory of btn "Tab Menu" of group "myTabs" to 1  --first tab
+end preOpenStack
+----
+
+Lesson 16
+Create A Modal Dialog
+
+Introduction
+A modal dialog box is a window that blocks other actions while the window is displayed, such as an Open File dialog or an error notification. You cannot bring another window in the application to the front until the dialog box is closed.
+
+Creating the windows
+Create a new main stack named "Modal Dialog Example". Add a button to launch the modal dialog. Create a substack called "Modal Dialog", on which to add a label and an OK button to close the dialog.
+
+Making the dialog modal
+Edit the script for the "OK" button with:
+
+on mouseUp
+    close this stack
+end mouseUp
+
+Edit the script for the "Open Modal Dialog" button with:
+
+on mouseUp
+  modal stack "Modal Dialog"
+  --toplevel stack "Modal Dialog"  --to edit
+end mouseUp
+
+And that's it! Clicking on "Open Modal Dialog" will open up the new window, which will retain focus if you try to access the main stack window until it is closed by clicking the "OK" button.
+
+Editing a modal substack
+While you cannot bring another window in the application to the front until the dialog box is closed, it is important to note that you cannot edit the substack using the tools in the Tools palette either.
+
+To be able to edit the substack, change the line 'modal stack "Modal Dialog"' to 'toplevel stack "Modal Dialog"'. Just remember to change it back again when you have finished editing the substack. Or, use the contextual-menu shortcut (Control-Shift-Right-click for Unix or Windows, Command-Control-Shift-click for Mac OS) to display a context menu. Set the Stack Mode to toplevel to make the substack editable.
+----
+
+Lesson 17
+Modal Dialog Data
+
+Pass Data To And Get Data From A Dialog
+LiveCode has built-in support for basic dialogs using the answer and ask commands. But sometimes your application needs to display a customized dialog to the user. The dialog may prompt for some user input or merely alert the user about something. Create a substack that acts as your modal dialog.
+
+This lesson will show you how to use the dialogData global property to pass data from the handler that opens the dialog to the substack modal dialog and back again.
+
+The Scenario
+In order to see how the dialogData global property works I will show you how to open a dialog by clicking on a button. The dialog that opens will display a list of choices. The item that is initially selected will be provided by the main application window when the button is clicked. When the dialog window is closed the item that was selected will be passed back to handler that opened the dialog.
+
+Opening The Dialog
+Let's start by looking at the LiveCode code that opens a dialog. When clicking on the Open Dialog button the stack My Modal Window will be opened as a modal window. Before opening the window, however, the global property the dialogData will be assigned the name of the item that should be selected by default when the dialog opens.
+
+Selecting the Default Choice In The Modal Dialog List
+Because a global property is available in all of your scripts the preOpenCard handler in the My Modal Window card script (the only card of the My Modal Window stack) has access to it.
+
+The modal dialog uses the value stored in the dialogData to select the default choice in the list field.
+
+Passing The Selected Choice Back To The Calling Handler
+Data can be passed from the dialog window back to the handler that opened the dialog window just as easily. Before closing the dialog window just set the dialogData to the value you want to return. In this case the dialogData will be set to the text that is selected in the list, but you can set the dialogData to any value.
+
+set the dialogData to the hilite of btn "MyCheckBox"
+set the dialogData to the hilitedButtonName of group "MyRadioButtons"
+set the dialogData to the text of fld "MyField"
+set the dialogData to the hilite of btn "MyCheckBox" &cr& the hilitedButtonName of group "MyRadioButtons"
+
+Displaying Selected Choice
+Here is the Open Dialog button script again with a slight modification. Now after the modal dialog window is closed, and thus execution of the mouseUp handler continues, the value of the dialogData is displayed in an answer dialog.
+
+The Result
+1) User clicks on the Open Dialog button. 
+2) "Item 2" is set as the default choice and is selected in the modal dialog that appears.
+3) The user makes a selection in the list.
+4) The user clicks the Close button.
+5) And an answer dialog displays the selection that was made.
+
+Using Arrays With The dialogData
+You can also pass arrays in the dialogData global property. Using arrays to pass data in the dialogData can be very useful when passing multiple values. The keys to using arrays are:
+1) To assign an array to the dialogData, create a variable that is an array and assign that variable to the dialogData.
+2) To get an array out of the dialogData, put the dialogData value into a variable and then use the variable.
+
+put "a string" into theArray["a string"]  --assign array to dialogData global
+put 0 into theArray["a number"]
+set the dialogData to theArray  --store array in dialogData global
+put the dialogData into theArray  --get an array from dialogData global
+answer theArray["a string"] &cr& theArray["a number"]  --display keys of array
+----
+
+Lesson 18
+Custom Properties
+
+All objects have built-in properties such as the name, width & height of an object, and custom properties which can be used to store any kind of information associated with that object.
+
+The built-in properties often have an immediate effect on the appearance or behaviour of an object, whereas custom properties require some scripting to have an effect.
+
+Setting and Getting Custom Properties
+The syntax for accessing custom properties is the same as used to access built-in properties so it is important to choose names for custom properties that are different from the built-in object properties to avoid confusion.
+
+One common approach to custom property naming is to prefix the names of custom properties with a lowerspace 'c' character. As an example, if we wish to store a name and location within an object as a custom property, we could do the following:
+
+set the cName of field "LiveCode" to "LiveCode Ltd."
+set the cLocation of field "LiveCode" to "Edinburgh"
+
+The "name" and "location" properties are built-in and common to all objects, so cannot be used as the names of our custom properties.
+----
+
+Lesson 19
+Answer File With Type
+
+Different operating systems use different application file types, the operating system can retrieved using the platform function.
+
+on mouseUp  --filters to show apps for current os
+    if the platform is "Win32" then
+        answer file "Select Application:" with type "Applications|exe|" 
+    else if the platform is "MacOS" then
+        answer file "Select Application:" with type "Applications|app|" 
+    else answer file "Select Application:"  --Unix 
+    if it = empty then exit to top
+    put it into fld "Filename"
+end mouseUp
+----
+
+Lesson 20
+Display An Image Dragged To A Stack
+
+This lesson will show you how to display an image file that is dragged on to a stack from the desktop.
+
+Creating The Stack
+Create a new stack and name it "Image Viewer". Drag an Image Area to the stack from the Tools Palette. This Image Area will be used to display the dragged image. Name the Image Area "Display".
+
+Accepting A Dragged Image
+Specify the Image Area can accept a dragged item with its dragAction property in a dragEnter handler, and then copy that item. Add the following to the Image Area script:
+
+on dragEnter
+    set the dragAction to "copy"
+end dragEnter
+
+Displaying The Dragged Image
+Get information about what's been dragged to the Image Area with the dragData property. dragData is an array, so use the dragData["files"] to retrieve the image's filepath. Then set the fileName of the image to the filepath to display the image. Add the following to the Image Area script:
+
+on dragDrop
+    set the fileName of me to the dragData["files"]
+end dragDrop
+----
+
+Lesson 21
+Proportionally Resize An Image
+
+When the width and height of an image object is changed, the image is scaled to fill the new size of the object. If the changes to the width and height are not proportional, the image will appear stretched and distorted. In this lesson you will see how images can be resized proportionally so that they retain their original appearence, though smaller or larger.
+
+Resize An Image With Shift-Drag
+The pointer tool can be used to resize images proportionally. When the pointer tool is in use and an object has been selected, resize handles (the small grey squares which indicate that an object is selected) appear at the corners and edges of the object. By dragging on these handles, the object is resized by moving the edge or corner clicked on to adjust the width and/or height of the selected object.
+
+If the Shift key is held down while dragging a handle, the proportions of the object are preserved. For example, shift-drag the bottom edge handle upwards to reduce the size by half and the right edge will automatically move to the left to reduce the width by the same amount.
+
+Resize An Image By Script
+An image will have been resized proportionally if the aspect ratio (the ratio between the width and height of the image) is preserved, that is if:
+oldwidth / oldheight =  newwidth / newheight
+OR
+oldwidth / newwidth = oldheight / newheight
+
+To preserve the aspect ratio when scaling an image, the width and height must both be scaled by the same factor. When the height is doubled, so to the width.
+
+Resize By Scale Factor Script
+The following custom command takes the long id of an image, and a scale factor, and applies it to the original width and height of the image:
+
+command ScaleImage pImageID, pScale  --proportionally scale an image
+    lock screen
+    set the width of pImageID to (the formattedWidth of pImageID * pScale)
+    set the height of pImageID to (the formattedHeight of pImageID * pScale)
+    unlock screen
+end ScaleImage
+
+Resize By Set Width Or Height Script
+You may wish to set a particular width or height on an image while maintaining the original proportions. In such a case you can calculate the appropriate height or width by determining the ratio between the original and the desired width/height and applying that to both. The following custom command demonstrates this for a given width:
+
+command SetWidthProportional pImageID, pWidth
+    local tRatio, tHeight
+    put (the formattedWidth of pImageID) / pWidth into tRatio
+    put (the formattedHeight of pImageID) / tRatio into tHeight
+    lock screen
+    set the width of pImageID to pWidth
+    set the height of pImageID to tHeight
+    unlock screen
+end SetWidthProportional
+----
+
+Lesson 22
+Tab Delimited Text In A Field
+ 
+A reasonable facsimile to a data grid table is tab delimited text in a scrolling field.
+
+The tabStops Property
+In a field table, columns are defined by the presence of the TAB character in the text. You can control the spacing of columns by adjusting the tabStops property.
+
+Place a scrolling field on a stack's card. Double-click the field to show its property Inspector and open the Table pane. Notice that the Tab Stops value is empty. Adjust the Tab Stops value in the Field Inspector to visually separate data into columns. Enter "50" to "80".
+
+Return to the scrolling field and enter your data separated by tabs and returns. Adjust the Tab Stops value to visually separate the columns.
+----
+
+Lesson 23
+Array In A Table Field
+
+Arrays are not plain text and cannot be displayed in a field without some extra work first. This lesson shows how to use the combine command to convert data from an array to text.
+
+Create A Test Stack 
+Create a new stack by selecting "New Mainstack" from the File menu. Drag a button and a table field from the Tools palette into your stack. Open the Inspector and change the name of the button to "Array" and the field to "ArrayData".
+
+Create An Array
+Select the "Array" button and add the following to its script:
+
+on mouseUp
+    repeat with i = 1 to 20
+        put random(1000) into tArray[i]
+    end repeat
+    combine tArray using return and tab
+    sort lines of tArray numeric by word 1 of each  --sort 1 to 20
+    put tArray into fld "ArrayData"
+end mouseUp
+
+This creates an array with 20 members, each of which contains a random number between 1 and 1000, tArray[1] = 492, tArray[20] = 3. The combine command changes the array into text form. The ArrayData field will contain a list of random numbers appear in the first column of the table field.
+
+By telling the "combine" command to combine using return and tab, the script has taken each entry in the array and put it on a new line in the list, and each line contains every element, including the array index, separated by tabs. The tArray variable has been changed to a text variable and is no longer an array, so it can be sorted and displayed in a field.
+
+Variable Types
+After you've used the "combine" command, the array variable is no longer an array! If you need to keep the data as an array but just want to display it temporarily, copy the array to a new temporary variable and combine it, preserving the original array.
+----
+
+Lesson 24
+Adding Images To Fields
+
+Use the imageSource property. This lets you assign an image to a character in a field:
+
+set the imageSource of char 1 of line 2 of field "This" to "2533"
+set the imageSource of char thisChar of field 1 to "Arrow"
+set the imageSource of last char of me to "binfile:My Image"
+
+To automatically allow line space to display an image, which could be considerably bigger than the surrounding text:
+
+set the fixedLineHeight of field 1 to false. 
+
+The textShift property helps adjust the alignment of images with surrounding text:
+
+set the textShift of last char of word 2 of field 1 to 3 -- subscript
+set the textShift of char 12 of the selectedField to -1 -- superscript
+----
+
+Lesson 25
+Play Sounds
+
+Audio files can be in either .wav, .aif, .aiff, or .au format. There are two main ways to access the audio file: 1) reference it by its filepath, or 2) import the sound directly into a stack. The reference method is best when a stack uses many large sound files. The import method prevents the audio file from getting lost or separated from the stack.
+
+on mouseUp  --by reference
+  play audioClip "/Users/davidwilliams/desktop/AudioLesson/Hello.aif"
+end mouseUp
+
+on mouseUp
+  put the sound  --currently playing audio file
+end mouseUp
+
+on mouseUp  --by reference from Desktop, or Documents
+  play audioClip specialFolderPath("Desktop")&"/AudioLesson/Hello.aif"
+  wait until the sound = "done"
+  answer "The sound is done." with "OK"
+end mouseUp
+
+on mouseUp  --by reference from stack location (useful for mobile device)
+  set the itemDelimiter to "/"
+  put item 1 to -2 of the fileName of this stack into tStackFolderPath
+  play audioClip tStackFolderPath &"/AudioLesson/Hello.aif"
+  wait until the sound = "done"
+  answer "The sound is done." with "OK"
+end mouseUp
+
+Import a sound file into a stack: file > import as control > audio file.
+On mobile devices, construct the path of the sound file using:
+specialFolderPath("engine") &"/"& tFileName
+----
+
+Lesson 26
+Graphic Effects For An Object
+
+1) Create a new stack and select the 'Freehand Polygon' tool.
+2) Draw a nice looking random shape on the card.
+ 
+Setup The Polygon
+To get the best view of the effects in action:
+1) set the opaque of this stack to "true"
+2) set the lineSize of graphic "A" to "0"  --remove border
+3) set the fillColor of graphic "A" to "blue"
+
+Select An Effect
+1) Select the Graphics Effects property pane.
+2) Select an effect to apply, in this case outerGlow.
+3) Increase the size property until you are happy with your effect.
+
+It's easy to apply any other effect. Just select it and play with the settings. You can export the graphic to an image using the export snapshot command, remembering to specify "with effects". 
+
+export snapshot from graphic "A" with effects to file "FX.png" as PNG
+
+You can also export the contents to PDF using the print commands
+----
+
+Lesson 27
+Skin A Stack With A Window Shape
+
+A stack is skinned when the default window is replaced with an image using the stack's windowShape property. This removes the title bar and it's close button from the default window, so a custom close button and method to move the stack must be added.
+
+1) Create stack: file > new mainstack.
+2) Name stack: object > stack inspector, enter "Skin Demo".
+3) Import an image into stack: file > import as control > image file. Choose a .png image large enough for controls (buttons and fields).
+4) Name image: select image, object > object inspector, enter "Skin".
+5) Position image at top left of window. In msg box: set the topLeft of img "Skin" to "0,0". The windowShape property is applied from the top left corner of the stack window.
+6) Adjust the blendLevel (transparency) of image if desired. In msg box: set the blendLevel of img "Skin" to "35"  --transparency 0 to 100, default = 0
+
+7) Add a close button. Drag push button from tools palette, name "Close", in script of btn "Close":
+on mouseUp  --btn "Close"
+  close this stack
+end mouseUp
+
+8) Add method to move stack. In script of img "Skin":
+local allowDrag  --script local
+on mouseEnter
+     put "" into allowDrag 
+end mouseEnter
+
+on mouseDown
+     put mouseLoc() into allowDrag
+end mouseDown
+
+on mouseMove X,Y
+     if allowDrag = "" then exit mouseMove
+     set the topLeft of this stack to globalLoc(X - item 1 of allowDrag &","& Y - item 2 of allowDrag)
+end mouseMove
+
+on mouseUp
+     put "" into allowDrag
+end mouseUp
+
+on mouseRelease
+     put "" into allowDrag
+end mouseRelease
+
+9) Set the windowShape of stack. In msg box: set the windowShape of this stack to the id of img "Skin"
+To revert back to default window: set the windowShape of this stack to "0"  --revert to default stack window to edit
+----
+
+Lesson 28
+Window Tricks
+
+When building an application in LiveCode, you may find yourself wishing you could customize the overall container of your content: the window, which we refer to as a stack. Stacks have several built-in properties that can be customized to a certain degree, but in this article we're going to go beyond the default settings and get our windows to do some amazing things.
+
+The WindowShape Property
+If you look in LiveCode's properties Inspector palette, you'll see you can choose from several standard system window styles, but what do you do when you want something really custom? It's time to turn to the windowShape property, which allows us to apply almost any shape imaginable to a window. All stacks have a windowShape property that can reference the id of an imported image, like this:
+
+set the windowShape of stack &&quote& MyStack &quote&& to the id of image 2
+
+For best results, you'll want to use a PNG image which can be generated by almost any image editing application, or even within LiveCode. PNG is most suitable for our needs because an image in this format can contain varying levels of transparency, and makes for professional looking results.
+
+Note that when a windowShape is applied to a stack, the visible portion of the stack will span the width/height of the imported image, starting from the top left of current card (0,0), regardless of where the image is located on the card. If the image is located at 500,500 but is only 70x70 pixels, the stack will appear to be 70x70 pixels, and the image will not be visible in the stack because it is located outside the windowShape region (again, the windowShape is always applied from the top left of the card).
+
+As a simple example, you could make a circular or triangular-shaped window just by importing a snapshot from a graphic on card, and using the imported shapshot as the windowShape reference. Here's a quick way to import a snapshot of an object. With the object selected, execute the following code in LiveCode's message box:
+
+import snapshot from the rect (the rect of the selObj) of the selObj
+
+The image referenced by the windowShape property is known as the "mask" of the window. The mask image can be a simple primitive shape, or a fully rendered interface design.
+----
+
+Lesson 29
+Process A Binary File
+
+Import a Binary File Into LiveCode
+put url ("binfile:/path/to/MyImage.png") into tBinaryData  --import image data
+ 
+Export a Binary File From LiveCode
+put tBinaryData into url ("binfile:/path/to/MyImage.png")
+----
+
+Lesson 30
+Print Cards To A PDF
+
+This lesson will show you how to print cards to a PDF document, and how to add external links and an outline for the document.
+
+The pdf printing commands are used to print cards of a stack. For this lesson, use an existing stack with more than 1 card. Place the following in the stack script:
+
+on PrintToPDF  --print cards to pdf
+   local FilePath
+   answer "Print all cards of this stack to a pdf?" with "Cancel" or "OK"
+   if it = "Cancel" then exit to top
+   set the printPaperOrientation to "portrait"  --portrait, landscape
+   set the printPaperSize to the width of this stack,the height of this stack  --stack dimensions
+   set the printCardBorders to "true"  --true, false
+   put specialFolderPath("Desktop") &"/AllCards.pdf" into FilePath  --save to desktop
+   open printing to pdf FilePath  --create the pdf
+   if it = empty then exit to top
+   repeat with i = 1 to number(cds in this stack)
+      print cd i of this stack into 0,0,the width of this stack,the height of this stack  --stack dimensions, no quotes
+      print break  --new page
+   end repeat
+   close printing
+   reset printing
+   launch document FilePath  --open with default pdf reader
+   if result() <> empty then answer "Sorry, but couldn't open the pdf document." with "OK" titled "Error"
+end PrintToPDF
+
+Use print into rect to scale the card to fit the specified rect. In this case the rect is the same size as the stack and the size of the paper so it should scale perfectly.
+
+2) In msg box (ctrl-m) type: PrintToPDF, and hit returnKey. LiveCode will print the cards to a pdf document on the desktop.
+ 
+Creating a document outline
+The print bookmark command can be use to create a document outline in the PDF. The print bookmark command is used similarly to the print link command we used in the previous example. To use it you specify the bookmark title, level, and location where the title is.
+
+The title is the name of the bookmark which will be displayed in the outline, the level is the depth of the bookmark, and the location is an x,y coordinate describing where on the current page the bookmark will be placed.
+
+In this example we will place Level 1 booksmarks for chapter titles, level 2 booksmarks for a.b sections and level 3 bookmarks for a.b.c sections.
+
+print bookmark "1.3.1 All Operating Systems" with level 3 at 4,273
+
+You can use the message box and mouseLoc() to get the location for bookmarks. In the message box (ctrl-m) type: put mouseLoc(). Move the mouse to the area on the card where you want to place a bookmark, and hit the returnKey. Use the resulting coordinates in your code.
+
+Update the handler with all the bookmarks you want to add:
+
+  print cd i of this stack into 0,0,the width of this stack,the height of this stack  --stack dimensions
+  if i = "1" then
+     print bookmark "1 Introduction" with level 1 at 4,2
+     print bookmark "1.1 Welcome" with level 2 at 4,96
+  else if i = "2" then
+     print link to url "http://lessons.runrev.com" with rect 408,34,518,52
+     print bookmark "1.2 Where To Begin" with level 2 at 4,2
+     print bookmark "1.2.1 System Requirements" with level 3 at 4,96
+  end if
+  print break
+----
+
+Lesson 31
+Save Data In A Standalone Application
+by Sarah Reichelt, 5/2005  [EDITED 5/2013]
+http://livecodejournal.com/tutorials/saving_data_in_revolution.html
+
+You've made a LiveCode stack that works perfectly and want to make it into a standalone application for other people to use. But standalones can't save data changes. Now what do you do? 
+
+There are four methods to save data changes in a standalone.
+1) Save to a stack file.
+2) Save to a template stack.
+3) Save to a preferences text file.
+4) Save to a data text file.
+
+1) Save To A Stack File (Splash Screen)
+Save To A stack File (Splash Screen) method uses a mainstack as a simple splash screen that goes to a stack file where all the action occurs and data changes are saved. This is possible because of an option to treat stack files as individual stacks when creating the standalone.
+
+In the splash stack: File > Standalone Application Settings..., click "Stacks" in the toolbar, click "Add Stack File..." and select one or more stacks to include with the standalone. LiveCode hates opening more than one stack with the same name, so choose a prefix for each project and name all stacks in the project using that prefix. Choose platforms to deploy to.
+ 
+Close the settings window, save the splash stack, file > "Save As Standalone Application...". Your application will be created but the added stack files will not be part of the application file, so they can be changed and saved as needed.
+
+Windows creates a single folder with a .exe and the stack files in the same folder. Mac OS X creates an application bundle which looks like a single file but is actually a folder. Control-click on the application and choose "Show Package Contents" from the popup menu, look in Contents:MacOS to see the application and the stack files. The LiveCode engine in the standalone knows where to find everything if you leave it where it was.
+
+Standalone, from LC User Guide
+Note:  A stack file directly attached to a standalone application cannot have changes saved to it. This stack is bound directly to the executable file that runs. The OS locks an executable file while it is running. If you want to save changes in your standalone application, split your stack up into multiple files. A common technique is to create a "splash screen" stack that contains a welcome screen and then loads the stacks that make up the rest of your application. These stacks are referenced as stack files on this pane in the standalone settings screen. It is thus possible to automatically update these component stacks, or to save changes to them. You may also want to consider creating preference files in the appropriate location on your end user's system (see the specialFolderPath function and query/setRegistry functions for more information).
+
+Standalone, from LC Data Grid
+If a splash screen standalone's stack file contains a datagrid, a trick must be done to coerce the standalone builder to load the datagrid library: create a new substack in the splash screen stack and name it "Data Grid Templates Decoy". (exact spelling). When the standalone builder sees a substack with a name beginning with "Data Grid Templates" it will load the required datagrid library.
+
+
+2) Save To A Template Stack
+Save To A Template Stack method can be used if only a single stack needs to be saved and the user may not have write access to the folder where the app is installed.
+
+Build the standalone into a single application file so that none of the stacks are saveable, but have one substack be a template for the mainstack you need to save. To save the data, clone the substack and save the copy (with all the data) into an appropriate location, such as the current user's documents folder.
+
+When the program first starts, look for this data stack and if it doesn't exist, create it from the substack template with the default settings or data already in place. When shutting down the application or after changing any data, save this substack again with a script like the following:
+
+on CreateDataStack
+   clone stack "DataTemplate"
+   set the name of stack "Copy of DataTemplate" to "MyAppData"
+   set the fileName of stack "MyAppData" to specialFolderPath("documents") &"/MyAppData.livecode"
+   save stack "MyAppData"
+end CreateDataStack
+
+
+3) Save To A Preferences Text File
+Save To A Preferences Text File method can be used when very little data needs to be saved, a few preferences for window placement, a few data fields, or the state of radio and checkbox buttons.
+
+In this case saving a preferences file is the best way to go. A user may re-install their system at any time and lose all preferences files, so don't store vital data your application needs to work. Have a default setup, or ask the user for more information.
+
+For the file path to the correct folder to store preferences:
+
+function PrefsFolderPath
+  if platform() = "MacOS" then put specialFolderPath("preferences") into PrefsFolder 
+  else if platform() = "Win32" then put specialFolderPath(26) into PrefsFolder  --Application Data
+  else put specialFolderPath("home") into PrefsFolder  --Linux/Unix
+  if last char of PrefsFolder is not "/" then put "/" after PrefsFolder
+  return PrefsFolder
+end PrefsFolderPath
+
+For Macs, this gives you the current user's Preferences folder. For Windows, it gives the user's Application Data folder. For Linux/Unix it gives the Home folder. The function includes a check to make sure the folder path always ends in a slash.
+
+A Preferences substack allows the user to edit settings. When the application starts, it reads the prefs text file and sets the various radio and checkbox buttons in the Preferences substack. To retrieve a setting, just check the relevant object on the Preferences substack. When the user edits the Preferences substack and wants to save, write the new settings to the prefs text file. If they edit but cancel, read the original data back from the prefs file.
+
+
+4) Save To A Data Text File
+Save To A Data Text File method can be used if the data to save is bigger or more important than a preferences text file.
+
+It's convenient to store data in a subfolder beside the application, although this may cause problems if the application is stored in the Applications or Program Files folder and the user doesn't have write access to that folder. Saving to a folder in the Documents folder is safer, or you could ask the user where they'd like the data text file stored.
+
+If writing the data text file gives an error, tell the user and let them select another storage location. If the user selects a location, store this as a preference so that you don't have to ask every time.
+
+Refer to the data text file with a relative file path so the user can move to a new hard drive or rename the drive without breaking the file path address. For a file path relative to the application:
+
+put the effective fileName of this stack into FilePath
+set the itemDel to "/"
+put "DataStorage/" into last item of FilePath
+if there is not a folder FilePath then new folder FilePath  --subfolder
+put TextData into url ("file:" & FilePath & "SavedTextData")  --text
+--put BinData into url ("binfile:" & FilePath & "SavedBinaryData")  --nontext
+
+To write data to the data folder, you can write either binary files or text files. If the data to save is plain text use "file:". To save pictures, sounds or other non-text data, use the binary save "binfile:".
+
+To summarize, while a standalone cannot save directly to itself, it CAN save to separate stacks, it CAN save to a cloned substack, and it CAN save data to external text files or binary files. There's no need to worry about whether your standalone application can save, it's just a matter of working out which method is most suitable.
+
+There are two additional advanced methods standalones can save data changes: using an external database such as MySQL and writing preferences to the Windows registry. They are outside the scope of this lesson.
+----
+
+Lesson 32
+Link Text
+
+This lesson shows how to use the textStyle and linkText properties and on linkClicked handler of a locked field to create hypertext links.
+
+1) Enter text into a text field: "Click here to go to LiveCode's site. Click here to go to a card with more information. Click here for a message."
+
+2) Create Links. In msg box (ctrl-m) type:
+set the textStyle of word 2 of line 1 of fld "HyperText" to "link"  --create link
+set the textStyle of word 9 of line 1 of fld "HyperText" to "link"
+set the textStyle of word 19 of line 1 of fld "HyperText" to "link"
+
+A linked word becomes blue with a blue underline, once visited the link becomes purple.
+
+To remove a link type:
+set the textStyle of word 19 of line 1 of fld "HyperText" to empty  --no link
+
+3) Create A Destination. In msg box type:
+set the linkText of word 2 of line 1 of fld "HyperText" to "http://www.livecode.com"  --website
+set the linkText of word 9 of line 1 of fld "HyperText" to "next cd"  --card
+set the linkText of word 19 of line 1 of fld "HyperText" to "This is a test linking hyperText."  --text
+
+4) Lock The Field. In msg box type:
+set the lockText of fld "HyperText" to "true"  --lock field
+
+5) Script The Locked Field. In the script editor for the field type:
+
+on linkClicked TheLink  --linked hyperText
+   if TheLink contains "http://" then launch url TheLink  --website
+   else if TheLink contains "card" or TheLink contains "cd" then go TheLink  --card
+   else answer TheLink with "OK"  --text
+   if result() <> empty then answer "Sorry, there was a problem with the link." with "OK"
+end linkClicked
+
+Link text properties: the textStyle, the linkText, the underlineLinks, the linkColor, the linkHiliteColor, the linkVisitedColor.
+Link text handler: on linkClicked
+----
+
+Lesson 33
+Table In A Text Field
+
+Create a new stack, add a field, name it "Display" and add some tab separated data to the field.
+
+This is a test of the Table In A Field lesson.
+3	6	1	2	19	22	8
+5	9	2	1	77	13	3
+8	9	3	9	88	64	6
+This concludes the test of the Table In A Field lesson.
+
+To create the grid set the hGrid and vGrid properties of the lines of the field which make up the table. The hGrid property causes 1 pixel width grid lines to be placed before and after any line with it set to true. The vGrid property causes 1 pixel width grid lines to be placed between each tab position and forces text to clip to tab width in a cell-like fashion.
+
+set the hGrid of line 2 to -2 of field "Display" to "true"
+set the vGrid of line 2 to -2 of field "Display" to "true"
+
+Now to make the table 'fixed width' we make sure the tabWidths finishes with a zero-width tab. This has two effects: the vertical grid lines will stop at the zero-width tab, and the left and right sides of the table determine the location of paragraph borders, filling and alignment.
+
+set the tabWidths of line 2 to -2 of field "Display" to "30,30,30,30,30,30,30,0"
+set the spaceBelow of line 1 of field "Display" to "10"
+set the spaceAbove of line -1 of field "Display" to "10"
+set the borderWidth of line 2 to -2 of field "Display" to "2"
+set the leftIndent of line 2 to -2 of field "Display" to "20"
+set the padding of line 2 to -2 of field "Display" to "5"
+----
+
+Lesson 34
+Read Data From An XML File
+
+This lesson shows how to load an XML file and access the data in it. XML files are useful for storing preference settings, working online with the web, and sharing data with other programs.
+
+Create An XML Example File
+1) Create a plain text file in Notepad or TextEdit. Save the file to the desktop as "Preferences.xml". In the text file paste the following XML data:
+
+<preferences>
+  <textColor>blue</textColor>
+  <textSize>16</textSize>
+  <introMessage size="18">Welcome guest, please click the button below to log in</introMessage>
+  <recentDocuments>
+    <recentDocument>C:/Documents and Settings/Administrator/Documents/DraftReport.txt</recentDocument>
+    <recentDocument>C:/Reports/FinalReport.txt</recentDocument>
+    <recentDocument>C:/Documents and Settings/Administrator/Desktop/Temp.txt</recentDocument>
+  </recentDocuments>
+ </preferences>
+ 
+2) Create a scrolling field "XML Info".
+3) Create a button "Extract XML" and paste into its script the following code:
+
+on mouseUp  --extract and display info from an xml file
+   local tFilePath, tTree, tOutput, tRecentDocuments, tListOfRecentDocuments
+   put specialFolderPath("desktop") & "/Preferences.xml" into tFilePath  --file on desktop
+   if not there is a file tFilePath then
+      answer "Sorry, the Preferences file couldn't be located on the desktop." with "OK"  --error
+      exit to top
+   end if
+   put revCreateXMLTreeFromFile(tFilePath, true, true, false) into tTree  --read xml file
+   if tTree is not an integer or tTree = empty then
+      answer "Sorry, unsuccessful processing the Preferences file." with "OK"  --error
+      exit to top
+   end if  --extract xml info:
+   put "Text Color:" && revXMLNodeContents(tTree, "preferences/textColor") &cr after tOutput  --textColor
+   put "Text Size:" && revXMLNodeContents(tTree, "preferences/textSize") &cr&cr after tOutput  --textSize
+   put "Introductory Message (size: " & revXMLAttribute(tTree, "preferences/introMessage", "size") & "):" &cr after tOutput  --size attribute
+   put revXMLNodeContents(tTree, "preferences/introMessage") &cr&cr after tOutput  --introMessage
+   put revXMLChildNames(tTree, "preferences/recentDocuments", return, "recentDocument", true) into tRecentDocuments  --line list
+   repeat for each line i in tRecentDocuments
+      put revXMLNodeContents(tTree, "preferences/recentDocuments/" & i) &cr after tListOfRecentDocuments
+   end repeat
+   delete last char of tListOfRecentDocuments  --last return
+   put "Recent Documents:" &cr& tListOfRecentDocuments after tOutput
+   put tOutput into fld "XML Info"  --display
+   revDeleteXMLTree tTree  --delete from memory
+end mouseUp
+----
+
+Lesson 35
+Create A Data Grid Table
+
+This lesson shows how to create a bare bones data grid table. There are two styles of data grids: table and form. A data grid table displays rows of data in structured columns. A data grid form displays rows of data in structured rows and is more complicated using two-dimensional arrays.
+
+1) Drag a data grid from the Tools palette to a stack, double-click for its properties Inspector. Name: "DataGrid 1", Style: Table.
+
+2) Contents tab. Type some tab delimited text. The text will appear as columns in the data grid, each tab indicating a new column, each return indicating a new line. Directly entering text in the data grid's properties Inspector is the easiest way to populate a table, but it can be done by code too.
+
+3) Columns tab. Label column 1 "State", check sort by column, type = text. Select col 2. Label column 2  "Code".
+
+4) Check the results in the data grid table. Change the column widths by dragging at the column header divider lines. Adjust the size of the data grid.
+
+5) Try populating the data grid table by code using the dgProp[] and dgText[] properties. A data grid is referred to as a group, not a field. Its properties are custom properties.
+
+on mouseUp  --populate data grid table by code
+  set the dgProp["column labels"] of group "DataGrid 1" to "State" &cr& "Code" &cr& "Capital" &cr& "#"  --cr delimited column names/labels
+  set the dgText["false"] of group "DataGrid 1" to \
+"Alabama" &tab& "AL" &tab& "Montgomery" &tab& "1" &cr& \
+"Alaska" &tab& "AK" &tab& "Juneau" &tab& "2" &cr& \
+"Arizona" &tab& "AZ" &tab& "Phoenix" &tab& "3" &cr& \
+"Arkansas" &tab& "AR" &tab& "Little Rock" &tab& "4"  --tab delimited columns, cr delimited rows
+end mouseUp
+----
+
+Lesson 36
+Create A Data Grid Form
+
+This lesson shows how to create a bare bones data grid form. There are two styles of data grids: table and form. A data grid TABLE displays rows of data in structured columns. A data grid FORM displays rows of data in structured rows and is more complicated using a two-dimensional array, a row template substack, a row behavior script, and a data insertion button & script. It is the most complex LiveCode control.
+
+• Create Row Template Controls
+1) Drag a data grid from the Tools palette to a stack, double-click for its properties Inspector. Name: "DataGrid 2", Style: Form, uncheck Fixed Control Height.
+
+2) Click Row Template button to arrange the row fields for the dg form. The Row Template window appears. In edit mode (right arrow in tools palette), select the Row Template group, Object > Edit Group.
+
+This lesson requires label and phone fields, outlined in the following steps.
+
+3) The default row template group has one field named "Label".
+a) Double-click it for its properties Inspector, name: "Label", show border.
+b) Basic Properties > Contents, type "Label" into the field contents.
+c) Contents > Size & Position, width = 150. Drag into position in upper left.
+
+4) Drag a label field from the Tools palette, position below "Label" field.
+a) Double-click it for its properties Inspector, name: "Phone", show border.
+b) Basic Properties > Contents, type "Phone" into the field contents.
+c) Contents > Size & Position, width = 150.
+d) Contents > Text Formatting, text alignment: left. Drag into position one pixel below the "Label" field.
+
+5) Resize the gray background graphic so that it is larger than the other controls.
+a) Single-click it and drag its resize handles.
+
+6) Now uncheck show border in each field's properties inspector.
+
+7) Object > Stop Editing Group, and File > Save (ctrl-s) to save changes made.
+
+• Write Code For Row Template Controls
+After creating the controls for each row in the row template, write the code that will move data into the controls and position them on the screen.
+
+1) Click Row Behavior button in the data grid's properties inspector to edit its row behavior script. There are several handlers to edit.
+
+2) Paste the new code completely replacing the existing "on FillInData" handler. This populates the dg form rows with data.
+
+on FillInData pDataArray
+   set the text of fld "Label" of me to pDataArray["Label"]
+   set the text of fld "Phone" of me to pDataArray["Phone"]
+end FillInData
+
+3) Paste the new code completely replacing the existing "on LayoutControl" handler. This positions the controls within a dg form row. For this lesson, extend fields the width of the background graphic, and resize the background graphic to fill the entire row rectangle.
+
+ on LayoutControl pControlRect
+    local theFieldRect
+    put the rect of fld "Label" of me into theFieldRect
+    put item 3 of pControlRect - 5 into item 3 of theFieldRect
+    set the rect of fld "Label" of me to theFieldRect
+    --
+    put the rect of fld "Phone" of me into theFieldRect
+    put item 3 of pControlRect - 5 into item 3 of theFieldRect
+    set the rect of fld "Phone" of me to theFieldRect
+    --
+    set the rect of graphic "Background" of me to pControlRect
+end LayoutControl
+
+4) Paste the new code completely replacing the existing "on mouseDoubleUp" handler.
+
+on mouseDoubleUp pMouseBtnNum
+   local theKey
+   if pMouseBtnNum = "1" then  --left click
+      if the dgProps["allow editing"] of the dgControl of me then
+         switch the short name of the target
+            case "Label"
+               put "Label" into theKey
+               EditFieldText the long ID of the target, the dgIndex of me, theKey
+               break
+            case "Phone"
+               put "Phone" into theKey
+               EditFieldText the long ID of the target, the dgIndex of me, theKey
+               break 
+         end switch
+      end if
+   end if
+   pass mouseDoubleUp
+end mouseDoubleUp
+
+5) File > Save (ctrl-s) to save changes made to the script.
+
+• Populate The Controls With Data
+ This lesson populates the dg form controls with data by setting the dgData property. The dgData property accepts a multi-dimensional array. The first dimension is an integer representing the row. The second dimension is the key or value to pass to each row. The code that populates the dg form can be located in a button script, card script, or stack script.
+
+1) Drag a push button from the Tools palette, positioned next to the data grid form "DataGrid 2".
+
+2) Double-click it for its properties Inspector, Name: "Insert Data".
+
+3) Paste this code into the button's script.
+
+on mouseUp  --insert data into data grid form
+   local tDataArray
+   answer "Insert data into the data grid form?" with "Cancel" or "OK"
+   if it = "Cancel" then exit to top
+   --
+   put "Frank Wilson, CEO" into tDataArray[1]["Label"]
+   put "(999)-555-1234" into tDataArray[1]["Phone"]
+   --
+   put "James Smith, President" into tDataArray[2]["Label"]
+   put "(999)-555-4321" into tDataArray[2]["Phone"]
+   --
+   put "Jane Nelson, Vice-Pres" into tDataArray[3]["Label"]
+   put "(999)-555-1423" into tDataArray[3]["Phone"]
+   --
+   put "Sarah Brown, Manager" into tDataArray[4]["Label"]
+   put "(999)-555-4422" into tDataArray[4]["Phone"]
+   --
+   put "Mike Harris, Janitor" into tDataArray[5]["Label"]
+   put "(999)-555-5544" into tDataArray[5]["Phone"]
+   --
+   lock screen
+   set the dgData of group "DataGrid 2" to tDataArray  --populate dg form
+   set the dgHilitedLines of group "DataGrid 2" to "1"  --hilite first row
+end mouseUp
+
+• The Final Result
+By default a data grid uses a fixed height for each row. If you have not set the row height the first time you populate the data grid with data then the value is automatically filled in based on the height of your row template. If you then change the height of the row template later on you will need to update the row height in the properties Inspector.
+----
+
+Lesson 37
+Checkbox In A Data Grid Form
+ 
+This lesson will demonstrate how to associate the hilite state of a checkbox in a data grid form with a row value.
+
+• Add A Checkbox To A DG Form
+1) Drag a data grid onto a stack, name it "DataGrid 3" and set the style to Form in its properties Inspector.
+2) Click the Row Template button, tools > application browser.
+3) Select the second card under the Data Grid Templates stack, then select the Row Template group on that card.
+4) Object > edit group. Select and delete the default field "Label". Drag a checkbox from the Tools palette to the upper-left corner of the card. The button will appear in the list of controls in the Application Browser. Name: "Check". You'll use the checkbox's hilite (true/false) and the checkbox's label for displaying text.
+5) Change the checkbox height to 21 and the left and top properties to 0 in the checkbox's properties Inspector.
+6) Delete the default Label field, object > stop editing group.
+....
+
+• Edit Row Behavior
+Edit the Row Behavior to use the new checkbox button.
+1) Click the Row Behavior button.
+2) Paste a new "on FillInData" message handler replacing the original message. The code will set the label of the checkbox to the "label" property of the data grid row and set the hilited property to the "checked" property of the row.
+
+ on FillInData pDataArray
+     set the label of btn "Check" of me to pDataArray["Label"]
+     set the hilited of btn "Check" of me to pDataArray["Checked"]
+ end FillInData
+ 
+3) Paste a new "on LayoutControl" and "on ResetData" message handler replacing the original messages.
+
+ on LayoutControl pControlRect
+     local theFieldRect
+     put the rect of btn "Check" of me into theFieldRect  --can't set directly
+     put item 3 of pControlRect - 5 into item 3 of theFieldRect
+     set the rect of btn "Check" of me to theFieldRect
+     set the rect of graphic "Background" of me to pControlRect
+ end LayoutControl
+ 
+on ResetData
+     set the text of btn "Check" of me to empty
+     set the hilite of btn "Check" of me to "false"
+ end ResetData
+....
+
+• Update Data Grid Row Value When User Changes Checkbox
+When the user clicks on the checkbox the hilited state changes. You need to update the row data in the data grid when this happens so that the dgData array properly represents what is being seen in the interface. Updates are made in an "on mouseUp" handler of the row behavior script. 
+
+During mouseUp the hilited state of the checkbox has been changed and so it is safe to save the value. Call SetDataOfLine and pass in the hilite of the target (the target being the checkbox button).
+
+1) Paste a new "on mouseUp" message handler at the bottom of the row behavior script.
+
+ on mouseUp pMouseBtnNum
+     if pMouseBtnNum = "1" then  --left click
+         if the short name of target() = "Check" then SetDataOfLine the dgLine of me, "Checked", the hilite of target()  --update checkbox
+     end if
+ end mouseUp
+....
+
+• Create A Populate Grid Button
+1) Drag a button from the Tools palette to the stack and name it "Insert Data".
+2) Paste a new "on mouseUp" message handler into the button's script, replacing the original message.
+
+on mouseUp  --insert data into dg form
+   local tDataArray
+   answer "Insert data into the data grid form?" with "Cancel" or "OK"
+   if it = "Cancel" then exit to top
+   --
+   put "Line 1  of text" into tDataArray[1]["Label"]
+   put "false" into tDataArray[1]["Checked"]
+    --
+   put "Line 2 of text" into tDataArray[2]["Label"]
+   put "false" into tDataArray[2]["Checked"]
+   --
+   put "Line 3 of text" into tDataArray[3]["Label"]
+   put "false" into tDataArray[3]["Checked"]
+   --
+   lock screen
+   set the dgData of group "DataGrid 3" to tDataArray  --populate dg form
+   set the dgHilitedLines of group "DataGrid 3" to "1"  --hilite first row
+ end mouseUp
+
+3) Test the new button.
+....
+
+• Create A Check/Uncheck Button
+When working with lists that have checkboxes its nice to include the option to check or uncheck all the items in the list with a second button.
+
+1) Drag a button from the Tools palette to the stack and name it "Check/Uncheck".
+2) Paste a new "on mouseUp" message handler into the button's script, replacing the original message.
+
+ on mouseUp
+     local theCheckedValue
+     dispatch function "GetDataOfLine" to group "DataGrid 3" with 1, "Checked"
+     put result() into theCheckedValue  --hilite of first checkbox
+     put not theCheckedValue into theCheckedValue  --inverse hilite
+     repeat with i = 1 to the dgNumberOfLines of group "DataGrid 3"
+         dispatch "SetDataOfLine" to group "DataGrid 3" with i, "Checked", theCheckedValue  --change hilite of all checkboxes
+     end repeat
+     dispatch "RefreshList" to group "DataGrid 3"  --update display
+ end mouseUp
+
+3) Test the new button. The checkboxes should toggle between the checked and unchecked.
+
+Now when you get the dgData or dgText properties of the data grid form, the proper values for the "Checked" state of each row will be returned.
+----
+
+Lesson 38
+Scroll An Image
+
+Group a large image to scroll it within a smaller stack. The same scrolling technique can be used to group buttons and fields outside the smaller stack window.
+
+1) Create a stack. In the stack properties Inspector, name the stack. Basic Properties > Size & Position, resize to 300 x 300 and uncheck Resizable.
+
+2) File > Import As Control > Image File. Choose an image larger than 300 x 300 to import into the stack.
+
+3) With the image selected, Object > Group Selected. Name the group "Display".
+ 
+4) In the group's properties Inspector, check Horizontal scrollbar and Vertical scrollbar.
+
+5) Basic > Size & Position, set the width and height of group "Display" to the same size as the stack, 300 x 300, set the left and top positions to 0, and Lock size and position. Now the group will scroll within the smaller stack's window.
+
+Repeat the same technique for multiple controls like buttons and fields that are outside the stack window. Edit > Select All (ctrl-A), Object > Group Selected. Repeat steps 4 & 5.
+----
+
+Lesson 39
+Store/Retrieve An Array In A Text File
+
+on mouseUp  --store data in external file using array
+   put the long id of fld "Car" into myField
+   put "C:\folder\file.enc" into myFilePath
+   put arrayEncode(the customproperties of myField) into myEncArray
+   put myEncArray into url ("binfile:" & myFilePath)
+end mouseUp
+
+on mouseUp  --retrieve data from external file using array
+   put the long id of fld "Car" into myField
+   put "C:\folder\file.enc" into myFilePath
+   put arrayDecode(url ("binfile:" & myFilePath)) into myArray
+   set the customproperties of myField to myArray
+end mouseUp
+ 
+LiveCode enables you to convert an array into a format that can be stored in a file or sent to a URL using arrayEncode. Conversely, you can use arrayDecode to convert data back into an array. This lesson will show you an example of how to use arrayEncode/arrayDecode with the fillGradient property of a graphic.
+
+The fillGradient property of a graphic is an array containing all of the gradient information. The example demonstrates how to store the fillGradient array of the graphic in a file as well as load the fillGradient array from a file and assign it to the graphic.
+
+Storing an Array in a File
+The code snippet demonstrates how to convert the fillGradient property (an array) of a graphic into a binary representation of the array using arrayEncode. This binary representation is stored in the variable theEncodedArray.
+
+if theFile is not empty then  --store array in a file
+  put arrayEncode(the fillGradient of graphic 1) into theEncodedArray
+  put theEncodedArray into url ("binfile:" & theFile)
+end if
+
+When storing the array in a file it is important that you write the data to the file in binary format otherwise the encoded array data will be corrupted. That is why the binfile: prefix is used.
+ 
+Loading an Array From a File
+To load the binary representation of the array from a file you just reverse the steps. Begin by reading the data from the file in binary format using the binfile: prefix. In this snippet the binary data is stored in the variable theEncodedArray.
+
+if theFile is not empty then  --load array from a file
+  put url ("binfile:" & theFile) into theEncodedArray
+  put arrayDecode(theEncodedArray) into theFillGradientA
+  set the fillGradient of graphic 1 to theFillGradientA
+end if
+
+You can then pass the binary data to arrayDecode which transforms the binary data back into an array variable, theFillGradientA in this case. At this point the array can be assigned to the fillGradient property of a graphic. 
+----
+
+Lesson 40
+Android Developer On Windows
+
+This lesson describes the basic steps you need to follow in order to start up as an Android developer using a PC with Windows operating system. System configuration information and screen captures are provided.
+
+Introduction
+Android is another mobile device family supported by LiveCode. The steps discussed in this lesson outline a process that allows you to set yourself up as a LiveCode developer for the Android platform and successfully build and deploy test applications. The steps are set out in chronological order, first determining the software requirements and then setting up your system.
+
+Software Requirements
+You will need a PC that has the following software installed:
+- Windows XP, Windows Vista or Windows 7
+ - LiveCode 4.6.1 or later
+ - Java SDK (JDK) 
+ - Android SDK
+
+Note: It is assumed that you are familiar with the installation process of a Windows operating system and LiveCode. Please make sure these are installed before you commence with the remaining steps of this lesson. The following steps run you through the software installation process that you would typically follow on a PC.
+
+Downloading Java SDK (JDK)
+If you do not have the Java SDK (JDK) installed, then you can download it from: http://www.oracle.com/technetwork/java/javase/downloads/index.html.
+
+This link takes you to a landing page for a number of Java specific downloads. You should download the JDK. This can be accessed by selecting the first button in a row of four. The button contains the Java coffee cup and the word "Java" only.
+
+Navigate to the download link that is specific to your operating system and select the download link. You may get the kind of download dialog that is shown in this step. Save the file to your file system, execute it and follow the installation steps that guide you through the installation. Note: You may get a warning dialog if you try to install Java SDK over a previously installed version. The dialog should allow you to reinstall the software, if you would like to do so.
+
+Installing Java SDK
+The Java SDK (JDK) installer lets you specify the path and the components you would like to install. LiveCode Android support does not require any configuration to the Java SDK (JDK) package or path selection and works with the default settings. You can continue the installation by selecting the Next > buttons that lead you through the installation wizard.
+
+Downloading the Android SDK
+If you do not have the Android SDK installed, then you can download it from: http://developer.android.com/sdk/index.html.
+
+Navigate to the download link that is specific to your hardware platform. You may get the kind of download dialog that is shown in this step. Save the file to your file system, execute it and follow the installation steps that guide you through the installation.
+
+Installing the Android SDK Without the Java SDK
+If you get this screen with a grayed out Next > button, then you did not install Java SDK properly. Please go back to the step that explains how to install the Java SDK. Note: Situations may arise where you have installed the Java SE Development Kit, but you still get this or a similar message. Try using the < Back button followed by the Next > button to work around this problem. 
+
+Installing the Android SDK
+The Android SDK installer lets you specify the path into which the components are to be installed. LiveCode Android Support does not require any change to the Android SDK package path and works with the default settings. Continue the installation by selecting the Next > buttons that lead you through the installation wizard. The last screen of the installation wizard provides you with a selection box that allows you to start the Android SDK and AVD Manager. Ensure this is ticked and select Finish.
+
+Installing the Android SDK Packages
+If you ticked the selection box that launches the Android SDK and AVD Manager at the last stage of the Android SDK Installer, then you should see two screens appear after you close the Android SDK Installer. If you did not tick the box or you would like to run the Android SDK and AVD Manager at a later date, then you should be able to launch it from your Start Menu of your Windows Manager.
+
+The main dialog, shown in the figure of this step, is the Android SDK manager. The second dialog box, shown in the upper left of this figure, is the Android Package Installer where you are required to accept Licence agreements for each installed package. 
+
+The Android Package Installer lets you select the packages you would like to install in your Android development environment. By default, only a few packages are selected. From this version of the SDK I would recommend keeping the default selection and also checking Android 2.2, 2.3.3 and 4.1
+
+Note: Very old versions of Android are not supported and the very latest versions of Android may not be supported until LiveCode has been updated. Ensure that you install the SDK Platform Android 2.2, API 8 with revision 2 (or later revision) package.
+
+Note: There is a known "black screen" issue when deploying certain stacks to a simulator running Android 2.2, API 8 with revision 2 . If you experience this issue please create and use an AVD of Android 2.3 or higher.
+
+Configuring a Virtual Device
+Once you have installed the required packages, you can use the Android AVD Manager to set up a virtual device that can be used in your development environment. This allows you to test your applications without requiring a physical Android device. You can launch the AVD manager from Start Menu of your Windows Manager. You can set up a virtual device as follows:
+1. Make sure the Android AVD Manager is running.
+2. Select New... .
+3. Choose the Name for your virtual device.
+4. Set the Target to at least Android 2.2 - API Level 8. (however I would recommend 2.3.3 due to black screen bug)
+5. Fill in the SD Card Size.
+6. Optionally enable Snapshot. This speeds up the launch of the emulator.
+7. Select Create AVD.
+
+Starting the Virtual Device Simulator
+You can launch the emulator by highlighting the virtual device you created and selecting Start... .
+
+Configuring a Physical Device
+In addition to setting up virtual devices, it is possible to set up physical devices. These devices can be accessed after they have been appropriately configured for debugging. Install the appropriate device drivers for the devices you would like to use. Details of how to do this can be found at the Android Developer Website. The relevant device must be set to debug mode, once the necessary drivers are installed:
+1. Go to the home screen, and select MENU.
+2. Select Applications -> Development and enable USB debugging.
+3. Connect the device via USB to your development machine.
+4. The device should now be available and accessible from the Development -> Test Target menu in the LiveCode IDE.
+
+Configuring LiveCode for Android Support
+By now, you should have successfully installed the required software in your development environment. The next step is to launch LiveCode and configure it to interface with the Android SDK. Launch the LiveCode IDE and select Edit -> Preferences to launch the Preferences menu. Then select Mobile Support and you are presented with the dialog shown in this step.
+
+This dialog allows you to configure the path to the Android SDK root, which you should already have installed. Select ... under Android SDK and choose the folder containing the Android SDK root. Validation checks are made once you specify the location of the Android SDK root. This ensures that you have selected a valid location and have the required Android components installed.
+
+The following error message may be raised if something is wrong with your set up:
+The chosen folder is not a valid Android SDK. Please ensure you have installed it correctly, and enabled support for Android 2.2 (Froyo).
+ This indicates that the path you specified is not pointing at the Android SDK root. You may have to navigate one level deeper into the folder hierarchy to access the root folder. The root folder may look something like: ...android-sdk-windows.
+
+The Standalone Application Settings... Window
+Select File -> Standalone Application Settings... from the LiveCode IDE. Then choose Android from the list of deployment options. This raises the Standalone Application Settings dialog for Android specific builds.
+
+You can make a stack build for Android by selecting the Build for Android tick box and configure any other options you wish to include. You can select the name of your application using the General option at the top of the pane and add files to your build by using the CopyFiles option at the top of the pane.
+
+Note: Making a stack build for Android disables building standalone mainstacks for any other non-mobile platforms. If you wish to share code and resources among platforms, factor your application into multiple stacks, using a different mainstack for mobile and desktop targets.
+Note: Inclusions, Copy Referenced Files, Bug Reports and Stacks features are not available when building for Android. Use the Copy Files feature if you wish to include multiple stack files in your application.
+
+Running Under Android
+You should now have set up your development environment for Android and are ready to test a LiveCode application on an Android device.
+
+Ensure the emulator is running or an adequately configured physical device is connected before trying to test your code. Then select a device from the LiveCode IDE from Development -> Test Target. Your Test icon on the main pane of the LiveCode IDE should now be active and allow you to deploy your LiveCode application.
+
+When deploying to a device, you may receive an "INSTALL_PARSE_FAILED_INCONSISTENT_CERTIFICATES" message. All this means is that there is currently an application installed on your device that has the same identifier as the app your are trying to deploy. This can happen if you are working on a specific app across multiple development machines. To resolve this issue you can do one of the following:
+-remove the existing application from the device you are deploying too.
+-change the app identifier in the standalone applications settings.
+----
+
+Lesson 41
+Android Location
+
+Introduction
+The iOS and Android engines can track the location, heading, acceleration and rotation of a device, if GPS, accelerometer and digital compass hardware are available. LiveCode commands can start, stop and capture relevant position and heading information that can then be used in your application.
+From time to time, an iOS device may request to calibrate the compass hardware. LiveCode provides a feature to set the timeout for the calibration request or probe the current timeout value. Note: This lesson assumes that your device has GPS, accelerometer and digital compass hardware.
+
+A Simple Test Interface
+Create a simple application interface consisting of eight buttons and a text field. The buttons control the activation of tracking location, heading, acceleration, rotation rate, and the timeout settings. The text field displays the location, heading, acceleration, rotation rate, and error information from the device.
+
+You can select which sensor you would like to access by selecting the sensor options from button "Location". The stack card contains the following five message handlers that update the text field.
+
+on rotationRateChanged
+    put params() &cr before fld "Log"
+end rotationRateChanged
+
+on locationChanged
+    put params() &cr before fld "Log"
+end locationChanged
+
+on headingChanged
+    put params() &cr before fld "Log"
+end headingChanged
+
+on accelerationChanged
+    put params() &cr before fld "Log"
+end accelerationChanged
+
+on trackingError
+    put params() &cr before fld "Log"
+end trackingError
+
+Testing for Location Tracking Support
+Button "Test for Support" tests whether or not the device provides support for the sensor selected.
+
+on mouseUp
+    if mobileSensorAvailable(the label of button "Sensor") then answer the label of button "Sensor" && "tracking is supported." with "OK"
+    else answer the label of button "Sensor" && "tracking is not supported." with "OK"
+end mouseUp
+
+Function mobileSensorAvailable() returns either true or false. Depending on the name of the sensor type passed in to this function, the result may vary. Not all devices support all sensors that are accessible via LiveCode.
+
+Getting Location Information
+Button "Start Tracking" informs LiveCode that the selected sensor should start to collect data.
+
+on mouseUp
+    mobileStartTrackingSensor the label of button "Sensor", the hilited of button "Loosely"  --"location", true
+end mouseUp
+
+Note: mobileStartTrackingSensor may request permission from the user to access the GPS hardware, depending on how the system preferences have been set up. If location tracking cannot be started, either because device support is not available or because the user denied access to GPS information then a trackingError message is sent.
+
+In this example, once the location is being tracked, LiveCode sends  a locationChanged message to your stack, each time a change in location is detected.
+
+Sensor tracking can be halted by selecting button "Stop Tracking", which has the following code:
+
+on mouseUp
+    mobileStopTrackingSensor the label of button "Sensor"  --"location"
+end mouseUp
+
+You can request sensor information directly, without having to process the changed messages. This is implemented under button "Get Current Reading" with the following code:
+
+on mouseUp
+    get mobileSensorReading(the label of button "sensor", true)  --"location", true [returns an array]
+    if it is an array then combine it using return and "="  --now a line list of latitude, longitude, altitude
+    put "Current Reading" && it &cr before fld "log"
+end mouseUp
+
+mobileSensorReading("location", true) returns an array with the following information:
+• horizontal accuracy – The maximum error in meters of the position indicated by longitude and latitude.
+• latitude – The latitude of the current location, measured in degrees relative to the equator. Positive values indicate positions in the Northern Hemisphere, negative values indicate positions in the Southern Hemisphere.
+• longitude – The longitude of the current location, measured in degrees relative to the zero meridian. Positive values extend east of the meridian, negative values extend west of the meridian.
+• vertical accuracy – The maximum error in meters of the altitude value.
+• altitude – The distance in meters of the height of the device relative to sea-level. Positive values extend upward of sea-level, negative values downward.
+• timestamp – the time at which the measurement was taken, in seconds since 1970.
+
+Note: If the latitude and longitude could not be measured, then those keys, together with the horizontal accuracy key are not present. If the altitude could not be measured, then that key together with the vertical accuracy are not present.
+
+mobileStartTrackingSensor "location",true  --enable
+get mobileSensorReading("location",false)  --comma list of latitude,longitude,altitude
+set the cLatitudeLongitude of me to item 1 to 2 of it
+mobileStopTrackingSensor "location"  --disable
+
+get mobileCurrentLocation()  --array with keys: latitude, longitude. returns empty if location tracking is not enabled. [when is this used?]
+----
+
+Lesson 42
+Android Move Input Field Away From Keyboard
+
+Use the following method to move a native mobile input field into view when the soft-keyboard of your device is active, and return to its original position when the keyboard is deactivated. Android keyboard height = 264 pixels from bottom edge. In a card script:
+
+local sInputId  --script local
+on openCard
+ if environment() = "mobile" then
+   mobileControlCreate "input"
+   put result() into sInputID
+   mobileControlSet sInputID, "rect", "2,350,298,465"  --initial rect of fld
+   mobileControlSet sInputID, "visible", "true"
+   mobileControlSet sInputID, "opaque", "true"
+  end if
+  pass openCard
+end openCard
+
+on keyboardActivated
+ mobileControlSet sInputID, "rect", "2,2,298,117"  --new rect of fld with keyboard
+end keyboardActivated
+
+on keyboardDeactivated
+ mobileControlSet sInputID, "rect", "2,350,298,465"  --initial rect of fld without keyboard
+end keyboardDeactivated
+----
+
+Lesson 43
+Unicode
+by Devin Asay, edited.
+
+In this lesson: textEncode(), textDecode()
+Unicode enables foreign languages to be displayed in LiveCode text. [LC v7 and higher are fully unicode compliant.]
+
+* Typing Unicode Into Text Fields
+To type Japanese characters, select the Japanese text input system on the computer and start typing. Livecode knows how to render it properly. Create Hebrew and Arabic (right-to-left) language text outside LiveCode and import. Learn how to select a text input method in the computer's help documentation. For Windows, a Language Interface Pack from microsoft.com must be installed.
+
+* Export/Import Unicode Text With textEncode() and textDecode() Functions
+Export unicode text in UTF-8 format. UTF-8 is a way to safely store unicode (double-byte) text in an ASCII (single-byte) text file. Import UTF-8 text into LiveCode to preserve unicode characters.
+
+put tOutput into url ("file:" &"/Output.txt")  --export all-English text
+put url ("file:" &"/Output.txt") into tInput  --import all-English text
+
+put textEncode(tOutput,"utf8") into tEncoded
+put tEncoded into url ("binfile:" &"/Output.txt")  --export any text
+
+put url ("binfile:" &"/Output.txt") into tEncoded
+put textDecode(tEncoded,"utf8") into tInput  --import any text
+----
+
+Lesson 44
+Modify The Message Pathway
+In this lesson: the backgroundBehavior, the behavior, pass, send, dispatch, insert into, remove from, start using, stop using.
+
+The normal message pathway can be modified to reduce redundant code by using groups, background groups, send, dispatch, backscripts, frontscripts, behavior buttons, and library stacks. Grouping objects with or without backgroundBehavior is common and very useful. Send and dispatch commands are occasionally useful. There are simpler methods instead of the other message pathway strategies: backscript, frontscript, behavior button, and library stack.
+
+* Group Objects (object > group > card > stack)
+A single object like a button or field, or a set of objects can be grouped to insert the group between object and card in the message pathway. A grouped object could handle a message in the object script and then pass the message along to the group script, or a message could go straight to the group script, where one message handler could be used by many objects.
+
+on mouseUp  --in object script
+  answer "This is a test." with "OK"
+  pass mouseUp  --to group script
+end mouseUp
+
+* Group Objects With BackGroundBehavior (object > card > bg group > stack)
+A group with backgroundBehavior inserts between card and stack in the message pathway. The background group appears on all new cards rather than pasting the same object or group on each card over-and-over. A bg grouped object could handle a message in the object script and pass the message along to card script and bg group script, or the message could go straight to the bg group script, where one message handler could be used by many objects.
+
+on mouseUp  --in object script
+  answer "This is a test of backgroundBehavior." with "OK"
+  pass mouseUp  --to card and bg group scripts
+end mouseUp
+
+* Send and Dispatch (out of msg pathway)
+Trigger the message handler of an object from another script. Dispatch features are useful with behavior button.
+send "mouseUp" to btn "CalculateTotal"
+send "mouseUp tSubTotal" to btn "CalculateTotal"  --include param
+dispatch "mouseUp" to btn "CalculateTotal" with "tSubTotal,tFormat"  --include params, it = handled/unhandled/passed
+
+* Backscript (stack > backscript > engine)  [Or: put code in stack script]
+The script of any object can be inserted into the back of the message pathway making that code available to all objects.
+
+insert the script of btn "PrintingTools" into back  --of msg pathway
+remove the script of btn "PrintingTools" from back
+
+* Frontscript (frontscript > object)  [Or: put code at beginning of object message handler]
+The script of any object can be inserted into the front of the message pathway handling that code even before the object's code is handled.
+
+insert the script of btn "InitialSetup" into front  --of msg pathway
+remove the script of btn "InitialSetup" from front
+
+* Behavior Button (object > behavior btn > card)  [Or: put same code in each object's script, or put code in cd script and refer to target()]
+A button's script can be used by any object with behavior, inserting the behavior button script between object and card. One behavior button can be used by any number of objects. An object can have only one behavior button. Once a behavior is set, it remains set. Can be used to hide code.
+
+set the behavior of fld "Weight" to the long id of btn "HealthCheck"
+set the behavior of fld "Height" to the long id of btn "HealthCheck"
+
+* Library (stack > library > engine)  [Or: put code in stack script]
+A library is a stack with reusable message handlers in the stack script. Rather than including code in a stack, a library stack containing the necessary code could be inserted into the message pathway after the current stack.
+
+on preOpenStack
+  start using stack "LibraryPrinting"  --in msg pathway
+  pass preOpenStack
+end preOpenStack
+
+on shutdownRequest
+  stop using stack "LibraryPrinting"  --in msg pathway
+  pass shutdownRequest
+end shutdownRequest
+
+on libraryStack  --library
+  --any pre-setup before inserting
+end libraryStack
+
+on releaseStack  --library
+  --any post-setup before removing
+end libraryStack
+----

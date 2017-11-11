@@ -1,0 +1,3979 @@
+LiveCode Scripts From LC Forum  11/2017
+(ctrl-f to find)
+----------------------------------------------------
+----
+LC Latest Version: http://downloads.livecode.com/livecode/
+LC Lessons: http://lessons.livecode.com/m/4071
+LC Forum: http://forums.livecode.com/
+----
+on mouseUp  --years & months between two dates
+  answer yearsAndMonths(1877,02,22,2017,08,14) 
+end mouseUp
+
+function yearsAndMonths y1,m1,d1,y2,m2,d2
+  put y2-y1 into y; put m2-m1 into m
+  if d2 < d1 then subtract 1 from m
+  if m < "0" then subtract 1 from y; add 12 to m
+  return m1 &"/"& d1 &"/"& y1 &&"-"&& m2 &"/"& d2 &"/"& y2 &&"="&&  y &&"years and" && m && "months."
+end yearsAndMonth
+----
+put controlAtLoc(mouseLoc())  --control 2
+put the long name of controlAtLoc(mouseLoc())  --button "Test" of cd id 1002 of stack "MyNewStack"
+----
+put any item of "3,4,5,6" into tVar
+switch tVar  --if switchExpression then use equal caseValue
+  case 3
+    answer "You have a 3."
+    break
+  case 4
+    answer "You have a 4."
+    break
+  default
+     answer "You have a 5 or 6."
+  end switch
+----
+put random(25) into tVar  --1 to 25
+switch  --if no switchExpression then use true caseCondition
+  case tVar <= "10"
+    answer "You're 10 or under."
+    break
+  case tVar >= "11" and tVar <= "20"
+    answer "You're from 11 to 20."
+    break
+  default
+     answer "You're from 21 to 25."
+  end switch
+----
+set the backColor of stack "Answer Dialog" to "red"  --empty, green, red, yellow
+---
+answer file "Choose a photo:" with type "JPG, PNG, BMP|jpg,png,bmp|"  --restrict image type
+----
+on mouseUp  --dg flds are named in column/row format.
+   set the opaque of fld "col 3 0002" of grp "DataGrid 1" to "true" --allow color, true/false
+   set the backgroundColor of fld "col 3 0002" of grp "DataGrid 1" to "light pink"  --light pink, light green, light blue, empty
+end mouseUp
+----
+set the fullClipboardData["text"] to the text of fld "A"  --copy any txt as plain txt.
+----
+function distance LA1, LO1, LA2, LO2  --distance between two lat,lon points as decimals
+   local EarthRadius = "3961"  --3961 miles or 6371 kilometers
+   put LA1*pi/180 into L1
+   put LA2*pi/180 into L2
+   put (LO2-LO1)*pi/180 into DLO
+   put acos(sin(L1)*sin(L2)+cos(L1)*cos(L2)*cos(DLO)) into X
+   return format("%.3f", EarthRadius*X)  --+- 1 meter
+end distance
+----
+on mouseUp
+ answer file "Choose a video to play:" with type "MPG, AVI|mpg,avi|"  --restrict image type
+   if it = empty then exit to top
+   lock screen
+   set the fileName of player 1 to it  --load video, expands full size without lockLoc
+   set the currentTime of player 1 to "0"  --beginning
+   set the lockLoc of player 1 to "false"
+   set the width of player 1 to round(the height of player 1 * (the formattedWidth of player 1 / the formattedHeight of player 1))  --aspect ratio
+   set the lockLoc of player 1 to "true"
+   start player 1
+end mouseUp
+----
+blue, green, red, pink, yellow, orange, lightblue, lightgreen, lightpink, lightyellow, empty  --valid
+put colorNames()  --all valid color names
+----
+on mouseUp  --store file in stack custom prop
+   local tFilePath, cFileName
+   answer file "Select a file to save into a Custom Property" with "Cancel" or "OK" titled "Save File"
+   if it = "Cancel" then exit to top
+   put it into tFilePath
+      set the itemdel to "/"
+      put item -1 of of tFilePath into cFileName
+      set the cFileName of this stack to url ("binfile:" & tFilePath)  --file > custom prop
+end mouseUp
+----
+on mouseUp  --extract file from custom prop
+   local tList, cFileName
+   put the customKeys of this stack into tList --line list of stack custom props
+   repeat with i = 1 to number(lines of tList)
+      put the text of line i of tList into cFileName  --name of file = custom prop name
+      put the cFileName of this stack into url ("binfile:" & specialFolderPath("desktop") &"/"& cFileName)  --custom prop > file
+   end repeat 
+end mouseUp
+----
+on mouseUp  --list controls in a group
+   local Box1
+   repeat with i = 1 to number(controls in grp "TestGroupA")
+      put the abbrev name of control i of grp "TestGroupA" &cr after Box1
+   end repeat
+   delete char -1 of Box1  --cr
+   put "Group TestGroupA contains:" &cr& Box1 into msg
+end mouseUp
+----
+on mouseUp  --open .html file in browser widget
+answer file "Select file:"
+if the result is not "cancel" then
+put it into temp
+replace space with "%20" in temp
+set the URL of widget 1 to ( "file://" & temp )
+end if
+end mouseUp
+----
+on keyDown pKey  --restrict field entry to number from 0 to 100
+  if (pKey is a number or pKey = ".") and (me & pKey) <= "100" and (me & pKey) >= "0" then pass keyDown
+end keyDown
+----
+on mouseDown  --draw line between two buttons
+   lock screen
+   create grc "NewLine"
+   set the style of grc "NewLine" to "line"
+   DrawLine
+end mouseDown
+
+on DrawLine
+      set the points of grc "NewLine" to the loc of btn "StartLine" & "," & mouseLoc()  --draw line
+      if mouse() = "down" then send "DrawLine" to me in 1  --keep drawing
+      else if mouseLoc() is within the rect of btn "EndLine" then  --connection
+            set the points of grc "NewLine" to the loc of btn "StartLine" & "," & the loc of btn "EndLine"
+            exit to top  --stop drawing
+     else delete grc "NewLine"  --no connection
+end DrawLine
+----
+on mouseUp  --count list duplicates, remove duplicates, sort?
+   put fld "OriginalList" into tList
+   repeat for each line i in tList
+      add 1 to CountingArray[i]  --list to array
+   end repeat
+   combine CountingArray with cr and comma  --array to list
+   put CountingArray into fld "RepeatList"
+end mouseUp
+----
+copy grp 2 of stack "MyClosedStack" to this cd of stack "MyStack"  --copy/paste group
+copy grp 2 of stack "MyStack" to cd 3 of stack "MyOtherOpenStack"  --copy/paste group
+----
+Break a script editor command into multilines: & \ (slash)
+put "This is one line" & \
+         " and this is a continuation of the same line." into msg  --ampersand-space-slash and indent
+----
+on enterInField  --in fld script, data entry required before tabKey can move cursor to next fld
+   if target <> empty then type tab
+end enterInField
+
+on returnInField
+   if target <> empty then type tab
+end returnInField
+
+on tabKey
+   if target <> empty then pass tabKey
+end tabKey
+----
+on mouseUp  --remove lines with numbers from a line list
+  put fld 1 into RawList
+  filter RawList without regex pattern "[0-9]+" into fld 2
+end mouseUp
+---
+on selectionChanged  --selected line in list fld
+   put selectedLine() into fld "MyNewSelection"
+end selectionChanged
+----
+on mouseUp  --unlock fld on doubleClick
+  wait 20 ticks
+  if mouseClick() then unlock fld "A"  --double-click, allow edit
+end mouseUp
+
+on closeField
+  lock fld "A"
+end closeField
+----
+set the menuHistory of btn "Tab Menu" to lineOffset("Home", the text of btn "Tab Menu")  --hilite "home" tab after a tab selection
+----
+put "1 (540) 444-2045" into Test
+put replaceText(Test,"[^0-9]","") into msg  --keep only numbers
+----
+on menuPick pItem  --btn "TextStyles"
+  switch pItem
+    case "Bold"
+    case "Italic"
+    case "Underline"
+       set the textStyle[pItem] of the selection to (not the textStyle[pItem] of the selection)
+       break
+    case "Custom Style"
+      -- put any custom handling beyond the built in styles here
+     break
+    case "Clear All"
+    set the textStyle of char 1 to -1 of fld (word -1 of selectedChunk()) to empty
+    break
+  end switch
+end menuPick
+----
+on ExportImgsOnCd  --export images from card to Documents folder
+   put specialfolderPath("documents") & "/" & "MyImgs" into tFilePath
+   if there is not a folder tFilePath then new folder tFilePath
+   put number(imgs of this cd) into tImgs
+   repeat with i = 1 to tImgs
+      if the text of img i <> empty then
+         put the short name of img i into tName
+         export img i to file (tFilePath &"/"& tName & ".png") as PNG
+      end if
+   end repeat
+end ExportImgsOnCd
+----
+--android/ios: Standard controls (button, field etc) dragged from the Tools palette will not have native appearance on mobile. Use the "mobileControlCreate", "mobileControlSet" and "mobileControlDo" commands to create and set properties of native mobile controls, such as text fields, players, browsers, scrollers etc. There are commands to create other mobile-specific components, e.g. a pick wheel using "mobilePick". Commands and functions specific to mobile start with "mobile". http://lessons.livecode.com/m/4069/l/29 , http://lessons.livecode.com/m/4069/l/94
+----
+export snapshot from rect tRect of this cd to file (specialfolderpath("desktop") & "/test.jpg") as JPEG
+export snapshot from rect screenRect() to file (specialfolderpath("desktop") & "/test.jpg") as JPEG
+----
+put shell("lpr myfile.jpg")  --print image on mac/linux
+put shell("mspaint /p c:/folder/subfolder/filename")  --print image on win
+----
+http://www.jrsoftware.org/isinfo.php  --free windows installer for LC standalone
+----
+--display pdf in LC
+put specialfolderpath("resources") & "/PDF_Files/MyPDF.pdf" into tFile
+replace space with "%20" in tFile  --required
+set the url of widget "BrowserWidgetName" to tFile
+----
+--one record of an array:
+tScores[1]["Date"] = 12/25/16
+tScores[1]["ID"] = 0105
+tScores[1]["Email"] = user1@example.com
+--sort entire array by ID:
+get the keys of tScores  --1,2,3...one per line
+sort lines of it by tScores[each]["ID"]
+put it into NewOrder
+put "1" into tCount
+repeat for each line i in NewOrder  --create new sorted array:
+  put tScores[i]["Date"] into tScoresSorted[i]["Date"]
+  put tScores[i]["ID"] into tScoresSorted[i]["ID"]
+  put tScores[i]["Email"] into tScoresSorted[i]["Email"]
+add 1 to tCount
+end repeat
+----
+--add video file(s) folder to standalone via the "Copy Files" tab in the standalone builder settings.
+on LoadSelectedVideo  --load video for player
+   put the selectedText of fld "Video Menu" into tVideoName
+   put specialfolderpath("resources") & "/Videos/" & tVideoName into tVideoFile  --path to video
+   set the fileName of player "My Video" to tVideoFile
+   set the currentTime of player "My Video" to "0"  --beginning
+end LoadSelectedVideo
+----
+on mouseUp  --count occurrences of "W" & "s" with an array
+   set the caseSensitive to "true"
+   get YourText
+   repeat for each char i in it
+      add 1 to CountWs[i]  --array
+   end repeat
+   put "s =" && CountWs["s"] &", W =" && CountWs["W"]  --into msg
+end mouseUp
+----
+set the clipboardData["styledText"] to the styledText of fld "Output"  --styled text to clipboard (copy)
+----
+put controlAtLoc(120,140)  --control at specific loc
+----
+put "120,140" into tTestPoint  --is a control at specific location?
+put empty into tControlList
+repeat with i = 1 to 50
+  if within(control i,tTestPoint) then put the short name of control i &cr after tControlList
+end repeat
+delete char -1 of tControlList  --return
+put tControlList  --into msg
+----
+local iWantToStop = "true"  --script local
+on mouseDown  --start/stop button
+   put not iWantToStop into iWantToStop
+end mouseDown
+on mouseUp
+   if iWantToStop then exit mouseUp  --true
+   else doAction 1
+end mouseUp
+on doAction x
+    if iWantToStop or x > "100" then exit doAction
+    put x into fld "Numbers"  --test
+    add 1 to x
+    send "doAction x" to me in 1 sec  --or millisecs
+end doAction
+----
+on mouseUp  --unicode text to website
+  put textEncode(fld "KoreanText","utf8") into UText
+  launch url "http://www.twitter.com/intent/tweet?text=" & UText
+end mouseUp
+----
+set the cStack of this stack to url ("binfile:/Applications/Livecode/YTR.livecode")  --store a stack in a custom property rather than info in .txt file
+put the cStack of this stack into url ("binfile:/Applications/Livecode/Copy of YTR.livecode")  --extract to new .livecode file
+-OR-
+put the cStack of this stack into tStackToGo  --extract to container
+go stack tStackToGo  --open
+----
+repeat for each line i in tList  --remove duplicates
+  put i into tArray[i]
+end repeat
+put the keys of tArray into tUniqueList
+----
+on mouseUp  --convert .rtf to .doc in mac with TextUtil (in pc with WordPad?)
+  put "/Users/admin/Documents/test.rtf" into tFileName
+  put the RTFtext of fld 1 into url ("file:" & tFileName)
+  get shell("textutil -convert doc" && tFileName)
+end mouseUp
+----
+put "SomeData" into url ("file:/path/to/file.txt")
+if result() <> empty then  --error testing
+   answer "Sorry, there was an error:" && result() &&"("& sysError() &")" with "OK" titled "Error"
+   exit to top
+end if
+----
+function convertDate pDate  --reformat date: year-mo-dy
+  convert pDate to dateItems  --year,month,day
+  set the numberFormat to "00"
+  return (item 1 of pDate +0) &"-"& (item 2 of pDate +0) &"-"& (item 3 of pDate +0)  --year-mo-dy
+end convertDate
+----
+repeat with i = 1 to number(fields)
+  if the lockText of fld i = "true" and the autohilite of fld i = "false" and the traversalon of fld i = "false" then next repeat  --it's a label field
+end repeat
+----
+put the mainStacks  --main stacks in memory
+put the subStacks of stack "MainStackName"  --substacks of main stack
+----
+on mouseup  --initiate email
+  revMail "david892@yahoo.com",,"Feedback","Your app is nice, but ...."
+end mouseup
+----
+launch url "tel:999 555 1234"  --initiate a phone call
+----
+put tOutput into url ("file:" &"/Output.txt")  --export all-English text
+put url ("file:" &"/Output.txt") into tInput  --import all-English text
+
+put textEncode(tOutput,"utf8") into tEncoded
+put tEncoded into url ("binfile:" &"/Output.txt")  --export any text
+
+put url ("binfile:" &"/Output.txt") into tEncoded
+put textDecode(tEncoded,"utf8") into tInput  --import any text
+----
+put sin(45*pi/180)  --convert 45 degrees to radians for trig functions
+----
+set the scaleFactor of this stack to ".5"  --scale down stack too large for current screen
+----
+on keyDown  --allow no more than 3 lines of text (even wrapped)
+  if (item 2 of the selectedLoc of me + the vScroll of me) / (the effective textHeight of me) < "3" then pass keyDown
+end keyDown
+----
+on keyDown X  --allow only integers and 1 decimal point, formatted for 2 decimal places
+  if X is an integer or X = "." and "." is not in me then pass keyDown
+end keyDown
+
+on closeField
+  set the numberFormat to "0.00"  --2 decimal places
+  put me * 1 into me  --apply format, auto-rounds
+end closeField
+
+on returnInField
+  closeField
+end returnInField
+
+on enterInField
+  closeField
+end enterInField
+----
+on KeyDown pKey  --enter text in unfocused fld
+   if the short name of focusedObject() <> "Barcode" then
+      focus on fld "Barcode" 
+      put pKey after fld "Barcode"
+   else pass KeyDown
+end KeyDown
+----
+on suspendStack  --reposition answer / ask dialogs
+    if "answer dialog" is among the lines of openStacks() then set the topLeft of stack "answer dialog" to the topLeft of this stack  --new loc
+    pass suspendStack
+end suspendStack
+----
+set the showBorder of this cd to "true"  --show border around a card
+set the borderWidth of this cd to "3"
+set the threeD of this cd to "false"  --true/false
+----
+set the title of me to the title of me && date()  --add text to stack title bar
+----
+on mouseUp  --click a btn or option btn menu by program. 
+   click at the loc of btn 1
+   select menuItem 3 of btn 1  --trigger an action
+   click at "0,0"  --dismiss menu
+end mouseUp
+----
+put "dissolve" into EffectName
+put "fast" into EffectSpeed
+unlock screen with visual effect (EffectName && EffectSpeed)  --name & speed in variables
+----
+on mouseUp  --allow editing a portion of text: change 887-1234 to 887-4321
+  set the itemDel to "-"
+  ask "Modify?" with item 2 of me titled "Edit Number"
+  if it <> empty and it is a number and length(it) = "4" and "." is not in it then put it into item 2 of me  --allow edit
+end mouseUp
+----
+--extract all-English text from a website:
+put url tURL into tData 
+set the htmltext of the templateField to tData 
+put the text of the templateField into tPlainText
+----
+on mouseDown  --navigate cds from pop-up or pull-down btn
+  put the cardNames of this stack into me
+end mouseDown 
+
+on menuPick pName
+  go cd pName
+end menuPick
+----
+show missing development > object/image libraries, in msg box:
+open stack "revImageLibrary" as palette
+----
+put 23.987 mod 1  --0.987, decimal portion of number
+put 23.987 - trunc(23.987)  --.987, decimal portion of number
+----
+put specialFolderPath("resources") &"/"& FileName into tPath  --folder containing mainstack or standalone.
+open file tPath
+----
+put specialFolderPath("resources") into tFolder
+launch document tFolder  --choose file to open
+----
+on errorDialog pExecutionError  --stack script, catch errors in a standalone
+    answer pExecutionError  --error code, error line in script, hint
+    answer line (item 1 of line 1 of pExecutionError) of the cErrorsList of card 1 of stack "revErrorDisplay"  --error code text
+end errorDialog
+----
+clickLine()  --line 3 of fld 5
+word 2 of clickLine()  --3
+value(clickLine())  --My dog's name is Spot
+clickChunk()  --char 17 to 20 of fld 5
+clickText()  --Spot
+----
+on mouseup  --output card data to .txt
+  set the defaultstack to "MyDataBase"
+  repeat with i = 1 to the number of cards of stack "MyDataBase"  --collect data in variable
+     put fld "type" of card x into tType
+     put fld "date" of card x into tDate
+     put fld "locale" of card x into tLocale
+     put tType &tab& tDate &tab7 tLocale &cr after DataCollection
+  end repeat
+  delete char -1 of tDataCollection  --last return
+  set the itemDel to "/"
+   put item 1 to -2 of (the effective fileName of this stack) &"/DataFiles" into RelativePath  --path to stack folder
+   set the itemDel to comma  --default
+   if there is not a folder RelativePath then new folder RelativePath  --new folder
+   put DataCollection into url ("file:" & RelativePath & "/NewDataBase.txt")  --relative path, all-English text
+   put DataCollection into url ("file:" & specialFolderPath("desktop") & "/NewDataBase.txt")  --desktop path, all-English text
+   if result() <> empty then answer "Sorry, there was a problem writing to a .txt file." with "OK"
+end mouseup
+----
+Stack Player. Make a one-card standalone with one button The script of the button can be a one-liner as long as your working stack is in the same folder with the standalone. You could put a list field with different stack names on the card, which goes to the stack listed on the clickline. Or you could hard-code the stack name into the app and go there without user intervention by sending a command on openCard. Or put up an answer file dialog so the user can choose any stack.
+on mouseUp
+  go stack "MyRealStack.livecode"
+end mouseUp
+----
+effective: use with any inherited property to search the object's owners for the property setting actually used.
+get the textFont of fld 1 -- empty
+get the effective textFont of fld 1  --Helvetica
+----
+put the customKeys of btn 1 into fld "Custom Props"  --line list of custom properties of an object
+if "HighScore" is among the lines of the customKeys of fld 2 then...  --check if a custom prop exists
+set the StoredFile of stack "PhotoAlbum" to compress(URL "binfile:mypicture.jpg")  --save to custom prop
+put decompress(the StoredFile of stack "PhotoAlbum") into URL "binfile:mypicture.jpg"  --restore from custom prop
+----
+get the customKeys of btn 1  --delete a custom prop
+set the wholeMatches to "true"
+delete line lineOffset("CustomPropToRemove",it) of it
+set the customKeys of btn 1 to it
+----
+set the backdrop to "#99FF66"  --none, colorname, RGBcolor, imageID
+set the backdrop to "white"  --for a game or kiosk
+set the backdrop to "1943"  --imageID
+----
+focus on nothing  --remove dotted outline of selected radio or checkbox btn
+----
+--chunk expressions char > word > item > line > remote cd,  ascending order only
+put item 1 of (word -1 of line 1 of fld "A")  --parentheses force pre-eval of word before item
+add 1 to word -1 of item -3 of line 1 of fld "A"  --"This is a test 0,0,0"    returns "This is a test 1,0,0"
+----
+--GNU Freeware License
+ProgramName, Author, c Year
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by 
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have 
+received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+----
+on mouseUp  --play .wav, .aiff, .mp3 file on desktop
+   answer file ""  --choose sound file
+   set the fileName of player 1 to it
+   set the currentTime of player 1 to "0"  --beginning
+   play player 1
+end mouseUp
+----
+put the top of stack mouseStack()  --85
+set the top of stack mouseStack() to -20  --raise stack window on screen
+set the height of stack mousestack() to "450"  --resize window: in msg box, cursor over window, returnKey
+----
+on resizestack  --place in cd or stack script. Resizes group (which has a scrollbar) when stack is resized
+  set the rect of grp "AllControls" to the rect of this cd
+end resizestack
+----
+--align btn icon & name
+set the iconGravity of btn "Test" to "left"
+set the textAlign of btn "Test" to "right"
+set the width of btn "Test" to (the formattedWidth of btn "Test") + (the formattedWidth of image id (the icon of btn "Test")) + (the rightmargin of btn "Test")
+----
+set the tabWidths of line 2 to -2 of fld "Display" to "100,100,100,100,0"  --table in scrolling fld
+set the spaceBelow of line 1 of fld "Display" to "10"
+set the spaceAbove of line -1 of fld "Display" to "10"
+set the borderWidth of line 2 to -2 of fld "Display" to "2"
+set the leftIndent of line 2 to -2 of fld "Display" to "20"
+set the padding of line 2 to -2 of fld "Display" to "5"
+----
+on mouseUp  --insert object into existing group
+   create btn "MeToo" in grp "Test"
+end mouseUp
+----
+--can't nest a group in another group. work-around is to copy controls to group or create controls in group, then group those controls.
+put the long id of btn "A" into tOldObj
+copy btn "A" to grp "B"  --works
+delete tOldObj  --original btn "A"
+group btn "A"
+set the name of last grp to "A"  --grp "A" in grp "B"
+OR
+set the style of the templateButton to "standard"
+create btn "A" in grp "B"  --works
+group btn "A"
+set the name of last grp to "A"  --grp "A" in grp "B"
+
+--group two existing groups into a 3rd group
+group grp "A" and grp "B"  --creates 3rd group
+set the name of last grp to "C"
+
+--refer to group "A" within another group "B"
+set the loc of grp "A" of group "B" to "50,50"
+----
+on mouseUp  --copy image
+   import paint from file "Map.jpg"
+   set the JPEGQuality to "50"
+   export last image to file "MapAfterImport.jpg" as JPEG
+end mouseUp
+----
+on mouseUp  --copy image
+   copy img "Old Image" to this cd
+   set the name of last img to "New Image"
+end mouseUp
+----
+put url ("binfile:Map.jpg") into url ("binfile:MapWithoutImport.jpg")  --copy image directly
+----
+put the dgProp["column labels"] of grp "DataGrid 1" into tLabels  --get a line list of data grid table column labels
+put the dgColumnLabel["Label 1"] of grp "DataGrid 1" into tColumnLabel  --get one data grid tabel column label
+set the dgProp["column labels"] of grp "DataGrid 1" to "Label 1" &cr& "Label 2" &cr& "Label 3"  --set data grid table column labels
+set the dgColumnLabel["Label 2"] of grp "DataGrid 1" to "NewLabel 2"  --set one data grid table column label
+----
+put random(40) into tTemp
+switch  --switch/case/break alternative to if/then/else
+  case tTemp = "20"
+    DoThis; break
+  case tTemp < "20"
+    DoThat; break
+  case tTemp > "20"
+    DoOther; break
+end switch
+
+switch tTemp
+  case "20"
+    DoThis; break
+  case < "20"
+    DoThat; break
+  case > "20"
+    DoOther; break
+end switch
+
+put "true" into y
+switch
+   case x or y or z
+      answer "Bingo"; break
+end switch
+
+switch
+   case (fld "HtmlField" contains "<b>") and (fld "HtmlField" contains "<u>")
+       beep 2; break
+end switch
+----
+set the dashes of graphic "Line1" to "1,5"  --1,5=dot  3,5=dash  7,5=longdash
+----
+set the width of btn "BtnName" to the formattedWidth of btn "BtnName"  --all of btn's name is visible
+----
+repeat with i = 100 down to 0 step 10  --fade out a sound in 1 sec
+   set the playLoudness to i
+   wait 100 millisecs with messages
+end repeat
+----
+--properties inspector: StartValue = 0, EndValue = 50+ desired end value, IncrementOnArrowClick = 1
+on scrollbarDrag NewPosition  --little arrows scrollbar object
+  put NewPosition into fld 1
+end scrollbarDrag
+----
+--little arrows scrollbar object
+on scrollbarLineDec NewPosition  --top arrow increases
+   if fld "Param1" <> "50" then add 1 to fld "Param1"
+end scrollbarLineDec
+
+on scrollbarLineInc NewPosition  --bottom arrow decreases
+   if fld "Param1" <> "0" then subtract 1 from fld "Param1"
+end scrollbarLineInc
+----
+--little arrows multiple scrollbar objects, place in cd script
+on scrollbarLineDec NewPosition  --top arrow increases
+  switch the short name of target()
+    case "Scrollbar1"; if fld "Param1" <> "50" then add 1 to fld "Param1"; break  --(0 to 50)
+    case "Scrollbar2"; if fld "Param2" <> "100" then add 1 to fld "Param2"; break  --(-100 to 100)
+    case "Scrollbar3"; if fld "Param3" <> "150" then add 1 to fld "Param3"; break  --(50 to 150)
+  end switch
+end scrollbarLineDec
+
+on scrollbarLineInc NewPosition  --bottom arrow decreases
+  switch the short name of target()
+    case "Scrollbar1"; if fld "Param1" <> "0" then subtract 1 from fld "Param1"; break
+    case "Scrollbar2"; if fld "Param2" <> "-100" then subtract 1 from fld "Param2"; break
+    case "Scrollbar3"; if fld "Param3" <> "50" then subtract 1 from fld "Param3"; break
+  end switch
+end scrollbarLineInc
+----
+set the fileName of image "Picture" to "/BigImage/Image1.png"  --display image
+put image "Image1.png" of stack "Substack" into image "Picture" of stack "Mainstack"  --alternate display image
+----
+--play audio file. You have a couple of choices. You can convert the .mp3 to either an .aif or .wav file and import it as a control. Then the "play" command will work. You won't need to use a file path this way, just the short name of the sound. If this is just a short sound effect, this method works very well. If the file is larger then you should use a player object. To load the player, you set its fileName to the file path of the sound file. To start the playback, use the "start" command.
+put "DogBark.mp3" into tSoundFile
+set the fileName of player "MP3Player" to tSoundFile  --.mp3
+if result() <> empty then answer result()  --check if it worked
+start player "MP3Player"
+OR
+put "Sounds/DogBark.wav" into tSoundFile
+play tSoundFile  --.aif, .wav
+----
+on PlaySound pSound  --mobile play sound
+   if environment() <> "mobile" then exit PlaySound
+   put specialfolderpath("engine") & "/Sound Files/DogBark.mp3" into tFolder
+   set the defaultFolder to tFolder
+   mobilePlaySoundOnChannel tFolder, "current", "now"
+end PlaySound
+----
+For short audio that doesn't need high fidelity I often import an audio clip into the stack. It keeps the sound together with the stack so you don't need a separate file on disk, and it sounds fine for things like clicks and beeps. The best format is aiff for something like this. There is almost no overhead when an audio clip is part of the stack and playback will be near-instant. If you do decide to use an audio file on disk instead, the overhead is minor but does take a little longer to start because the file has to be loaded into RAM. For mobile, must use referenced audio file.
+----
+set the cStoreStyledText of this cd to the htmlText of fld "MyStyledText"  --store styled text in custom prop
+----
+copy this cd; paste  --in msg box, duplicate cd in same stack
+copy this cd to stack "Receiver"  --in msg box, duplicate cd in different open stack
+----
+Avoid setting the imageQuality of image files to "best" when developing for mobile, they can't handle the graphics processing. Solution: Create several sizes of image files that don't have to be resized and set the imageQuality to "good" to speed up the phone app.
+----
+put fld "ElapsedSec" into tElapsed  --display elapsed seconds as MN:SC
+set the numberFormat to "00"
+put tElapsed div 60 into tMins
+put tElapsed mod 60 into tSecs  --mod = remainder after division
+put tMins &":"& tSecs into fld "ElapsedMinSec"
+----
+put "21868" into TimeElapsed  --seconds
+put TimeElapsed div 3600 into tHours  --secs/hr
+put TimeElapsed mod 3600 into TimeElapsed
+put TimeElapsed div 60 into tMinutes
+put TimeElapsed mod 60 into tSeconds
+put tHours &"h :"&& tMinutes &"m :"&& tSeconds &"s" into msg
+----
+if environment() = "mobile" then send "playMobileVideo" to me in 0 millisecs
+else play videoClip (specialfolderpath("desktop") &"/Videos/Intro.mp4")
+----
+Player objects are only available on the desktop, on mobile you must create a native player with MobileControlCreate.
+----
+on mouseUp  --unique item 3's from a line list
+   put empty into tArray
+   put "yellow,black,green" &cr& "blue,yellow,orange" &cr& "yellow,red,purple" into MyList
+   repeat for each line i in MyList
+      add 0 to tArray[item 3 of i]  --every item 3 as key of array
+   end repeat
+   put keys(tArray) into msg  --line list of unique item 3s, removes duplicates
+end mouseUp
+----
+on keyDown tKey
+   if tKey is in "1234567890." then  --numbers only
+      put line (word 2 of selectedLine()) of me & tKey into tVal  --test before allowing char in fld
+      if (tVal > "0") and (tVal <= "100") then pass keyDown
+      else answer "100 is the maximum limit." with "OK" titled "Error"
+   end if
+end keyDown
+----
+--safely paste a card with a datagrid.
+--don't paste a datagrid, both dgs will share same data.
+----
+set the backgroundBehavior of grp "DataGrid 1" to "true"  --unpopulated dg appears on new cds
+----
+--set individual fld text properties in a data grid:
+set the textAlign of fld "Col2 0003" of grp "DataGrid 1" to "center"  --works
+set the textColor of fld "Col2 0003" of grp "DataGrid 1" to "red"  --works
+set the opaque of fld "Col2 0003" of grp "DataGrid 1" to "true"  --required for next two props
+set the hiliteColor of fld "Col2 0003" of grp "DataGrid 1" to "red"  --now works
+set the backColor of fld "Col2 0003" of grp "DataGrid 1" to "red"  --now works
+----
+set the fullscreenMode of me to "exactFit"  --property of stack
+set the fullscreenMode of this stack to "exactFit"  --empty, "exactFit", "letterbox", "noBorder", "noScale", "showAll"
+on preOpenStack
+  set the fullScreenMode of me to "exactFit"  --standalone fits all screen sizes
+  pass preOpenStack
+end preOpenStack
+----
+Adjust stack size to match aspect ratio of target device.
+Samsung Tab4, 800/1280 & Asus Nexus7(2), 1200/1920 = .625, .625 * stackHeight = stackWidth. StackSize of 300/480 or 375/600 would match.
+iPad Retina = .750. StackSize of 360/480 or 450/600 would match.
+----
+on mouseUp  --age
+   ask "If Elvis were alive, how old would he be?" with "1/8/1935" titled "Age"
+   if it = empty then exit to top
+   answer "Birthdate:" && it &cr& "Age:" && age(it) & "." with "OK" titled "Age"
+end mouseUp
+
+function age Birthdate  --age("mo/dy/year")  [4-digit year] [handles windows dates < 1/1/1970]
+   local NewerYear, NewerMonth, NewerDay, OlderYear, OlderMonth, OlderDay, AgeYear, AgeMonth, AgeDay
+   convert date() to dateItems
+   put item 1 of it into NewerYear
+   put item 2 of it into NewerMonth
+   put item 3 of it into NewerDay
+   set the itemDel to "/"
+   put item 1 of Birthdate into OlderMonth
+   put item 2 of Birthdate into OlderDay
+   put item 3 of Birthdate into OlderYear
+   set the itemDel to ","  --default
+   put NewerYear - OlderYear into AgeYear
+   if NewerMonth < OlderMonth or NewerMonth = OlderMonth and NewerDay < OlderDay then subtract 1 from AgeYear
+   put NewerMonth - OlderMonth into AgeMonth
+   if AgeMonth < "0" or NewerDay < OlderDay then add 12 to AgeMonth
+   put NewerDay - OlderDay into AgeDay
+   if AgeDay < "0" then
+      subtract 1 from AgeMonth
+      add 30 to AgeDay  --approximate
+   end if
+   return AgeYear &&"years,"&& AgeMonth &&"months,"&& AgeDay &&"days"
+end age
+----
+on mouseUp  --you're 21
+  convert date() to dateItems
+  subtract 21 from item 1 of it  --years
+  convert it to short date
+  put "You're 21 if your birthdate is" && it &"."
+end mouseUp
+----
+on preOpenCard  --in stack script if objects have geometry settings
+  wait 0 millisec with messages  --allow geometry library to load on startup
+  revUpdateGeometry  --reset
+  pass preOpenCard
+end preOpenCard
+----
+put line 3 of weekdayNames()  --Tuesday
+put line 3 of the abbr weekdayNames  --Tue
+----
+commandNames(), functionNames(), propertyNames() return line list of all names
+if it is among the lines of propertyNames() then  --avoid using LC prop name for custom prop
+----
+on mouseUp  --color field by deadline date
+  put the seconds into tToday
+  put tToday + (86400 * 8) into t8Day
+  put tToday + 86400 into t1Day
+  put fld "DeadlineDate" into tDate
+  convert tDate to seconds
+  if tDate > t8Day then set the backgroundColor of fld "DeadlineDate" to "green"  --deadline not arrived
+  else if tDate <= t1Day then set the backgroundColor of fld "DeadlineDate" to "red"  --date = on or past deadline
+  else set the backgroundColor of fld "DeadlineDate" to "yellow"  --within 1 week of deadline
+end mouseUp
+----
+Don't use a pull-down menu on mobile, use mobilePick command instead for a native menu.
+----
+on mouseUp  --radio buttons to hide/show multiple groups
+  repeat with i = 1 to number(grps of this cd)  --hide all, then show one
+    hide grp "DataGroup" &i
+  end repeat
+  show grp (the label of target() +1)
+end mouseUp
+----
+--launch default external program to open a file or website.
+--url and document forms are both valid.
+--use document if there could be spaces in the filepath.
+--use launch <filepath> with <program> for a specific external program.
+launch url ("http://www.livecode.com")  --web
+launch url ("https://www.google.com/maps/@48.4571352,-122.3261867,14z?hl=en")  --web
+launch url ("file:Test.rtf")  --rtf (rich text format)
+launch url ("file:Test.txt")  --txt (all-English text)
+launch url (specialFolderPath("desktop") &"/Test.pdf") --pdf
+launch document (specialFolderPath("desktop") &"/My Test.txt")  --.txt, .pdf, .rtf  (filepath spaces)
+launch (specialFolderPath("desktop") &"/My Test.txt") with "Notepad"  --specific txt program
+if result() <> empty then answer "Sorry, but couldn't open the file." with "OK"
+----
+--concatinating script lines using ";" semicolon
+put item 1 of it into A1; put item 2 of it into A2; put item 3 of it into A4  --repetive put
+convert date() to dateItems; put item 7 of it into msg  --single mode msg box
+set the script of img 1 to "on mouseDown; grab me; end mouseDown"  --program from msg box
+lock screen; lock messages  --prep before action
+put random(3) into tTemp
+switch tTemp  --switch/case/break alternate form
+  case 1; do action1; break
+  case 2; do action2; break
+  case 3; do action3; break
+end switch
+---
+the target  --function, returns object
+target()  --function, returns object
+target  --text of the target if the target is a field
+----
+get files()  --default folder
+get files(specialFolderPath("documents"))  --specific folder
+sort lines of it international
+
+get folders()  --1st level sub-folders in default folder
+get folders(specialFolderPath("documents"))  --specific folder
+----
+if url "http://www.google.com" = empty then exit to top  --no internet online connection
+----
+on mouseUp  --scroll to appropriate letter in alpha-sorted list fld:
+  local tSearch, tLine
+  put the label of me into tSearch  --btn labels: A, B, C...
+  put lineOffset(cr& tSearch, cr& fld 1) into tLine  --hits only on first char of a line
+  if tLine = "0" then
+    answer "Sorry," &&quote& tSearch &quote&& "not found." with "OK"
+    exit to top  --not found
+  end if
+  set the scroll of fld 1 to (tLine * the effective textHeight of fld 1)  --foundLine
+  set the hilitedlines of fld 1 to tLine  --hilite that line
+end mouseUp
+----
+on mouseUp  --find in line list
+   put fld "A" into tList
+   put "Banana" into tEntry
+   put lineoffset(tEntry,tList) into tLine
+   if tLine = "0" then answer "Sorry," && tEntry && "is not in the list." with "OK"  --not found
+   else answer "Yes," && tEntry && "is in the list." with "OK"  --found
+end mouseUp
+----
+on mouseUp  --find all occurrences in line list with lineOffset()
+   local tList, tEntry, tLinesToSkip, tHitList
+   put fld "A" into tList
+   put "Banana" into tEntry
+   put "0" into LinesToSkip
+   repeat number(lines in tList)
+      get lineOffset(tEntry,tList,tLinesToSkip)
+      if it = "0" then exit repeat  --not found
+      add it to tLinesToSkip  --lineOffset() returns found line relative to previous found line, not from line 1.
+      put line tLinesToSkip of tList &cr after tHitList  --found
+   end repeat
+   delete char -1 of tHitList  --return
+   if tHitList = empty then answer "Sorry," && tEntry && "is not in the list." with "OK"  --not found
+   else put tHitList into msg box  --display found
+end mouseUp
+----
+put "apple" &cr& "bacon" &cr& "carrot" into tList
+put lineOffset("C",tList)  --2, the c in bacon is on line 2  --unintended
+put lineOffset(cr&"C",cr&tList)  --3, the c in carrot is on line 3, c starts line
+----
+lineOffset(cr&"Mike",cr&tList)  --line# where string starts line
+lineOffset("Mike"&cr,tList&cr)  --line# where string ends line
+lineOffset(cr&"Mike"&cr,cr&tList&cr)  --line# where string equals line
+----
+--environment functions: platform(), processor(), machine(), version(), systemVersion(), environment(), screenRect(), working screenRect(), effective screenRect()
+----
+if tBox1 contains word 1 to - 1 of SearchString then...  --conditional if/then
+----
+on tabKey  --tabKey within Tab menu
+   put the menuHistory of button 1 into HilitedTab
+   if HilitedTab < "4" then add 1 to HilitedTab  --four tabs
+   else put 1 into HilitedTab
+   set the menuHistory of button 1 to HilitedTab
+end tabKey
+----
+set the tabStops of fld "A" to "15"  --fld responds to tabKey indent
+----
+go back  --last visited card, repeatable
+go recent [cd]  --same thing
+put the recentCards  --reverse line list of all visited cards, current cd = line 1
+get line 3 of the recentCards; go it  --2nd last visited card
+----
+----------START SHORT/LONG MOUSE CLICK----------
+local sPressStart, sPressStop  --script local available to all handlers below it
+on mouseDown  --short and long mouse click
+  put millisecs() into sPressStart  --use secs() to time with less precision
+end mouseDown
+
+on mouseStillDown
+   put millisecs() into sPressStop
+   if sPressStop - sPressStart > "700" then  --long
+      put "That was a LONG mouse press." into msg
+      exit to top  --release polling
+   end if
+   if commandKey() = "down" then exit to top  --failsafe
+end mouseStillDown
+
+on mouseUp
+   if sPressStop - sPressStart <= "700" then  --short
+      put "That was a SHORT mouse click." into msg
+   end if
+end mouseUp
+----------END SHORT/LONG MOUSE CLICK----------
+----
+----------START MOUSEUP/MOUSEDOUBLEUP IN SAME SCRIPT----------
+local sClickId  --script local
+on mouseUp  --allow mouseUp & mouseDoubleUp handlers in same script
+  send "mouseSingleUp" to me in (the doubleClickInterval) millisecs
+  put result() into sClickId  --send id#
+end mouseUp
+
+on mouseSingleUp
+   put empty into sClickId  --delete the send id#
+   answer "You single-clicked." with "OK"  --1 click behavior
+   --single-click code...
+end mouseSingleUp
+
+on mouseDoubleUp
+  cancel sClickId  --cancel the send to stop 1 click behavior
+  put empty into sClickId  --delete the send id#
+  answer "You double-clicked." with "OK"  --2 click behavior
+  --double-click code...
+end mouseDoubleUp
+----------END MOUSEUP/MOUSEDOUBLEUP IN SAME SCRIPT----------
+----
+visual effect dissolve very fast to card  --visual effect with go (must use "card" not "cd")
+go next cd
+----
+lock screen for visual effect in rect (the rect of btn "Hello")  --visual effect without go
+set the visible of btn "Hello" to not the visible of btn "Hello"  --toggle show/hide
+unlock screen with visual effect dissolve  --only btn shows visual effect
+----
+visual effect scroll right; go cd 2  --open drawer
+visual effect reveal left; go cd 1  --close drawer, don't put an effect within quotes
+----
+--play MP3s:
+play tPath  --valid mobile only
+play audioclip tPath  --valid desktop only IF QuickTime is installed
+----
+launch document ("path/to/folder with spaces/My Info.pdf")  --open document where pathname contains spaces
+if result() <> empty then answer "Sorry, there was a problem opening the document." with "OK" titled "Error"
+----
+--swipe gesture for desktop and mobile: place in stack script
+local sStartH  --script local
+on mouseDown
+   put the mouseH into sStartH
+end mouseDown
+
+on mouseUp
+   if abs(the mouseH - sStartH) > "50" then  --swipe
+       if the mouseH < sStartH then
+           visual effect push left very fast
+           go next cd
+       else
+           visual effect push right very fast
+           go prev cd
+       end if
+   end if
+end mouseUp
+----
+answer "<p align=right>This is sample text to try.</p>"  --center or right align text in answer/ask cmd
+answer "<p><b>This is bold styled text.</b> <i>This is italic styled text.</i></p>"  --bold & italic
+answer "<p><i><font face=Arial color=white bgcolor=red>" & \
+  "This is sample text to try." & \
+  "</font></i></p>" with "OK" titled "Styled Text In Dialog"
+answer "<p bgcolor=black align=center><b><font size=24 face="&quote&"Courier New"&quote&& "color=white>" & \
+  "This is<br>sample text<br>to try." & \
+  "</font></b></p>" with "OK" titled "Styled Text In Dialog"
+----
+if the hilitedButtonName of grp "Radio1" = "Red" then  --hilited (selected) radio button
+   set the hilitedButtonName of grp "Radio2" to "Apple"  --hilite radio btn in different group
+end if
+----
+on mouseUp  --slider scrollbar
+   set the thumbPosition of me to (the thumbPosition of me)  --snap to integer
+end mouseUp
+----
+--datagrid & images:
+1) Import all images on ONE hidden card. --set the visible of cd id 1234 to "false"  --hide cd id 1234
+2) Note their IDs manually (to be sure all images are in a standalone.
+3) Always use buttons to display images, especially in DataGrids, even if they do not act as a button. Do NOT copy any image into the "template" row group, use a button instead.
+4) How to resize a button icon? Exchange the old data in the datagrid with new including the larger/smaller icon and set the dgData or dgText again.
+----
+answer file "Select stack to upload." with type "LiveCode Stack|rev,livecode,mc|"   --show just stacks
+----
+answer file "Choose a file:"; put it  --filepath in msg box
+----
+--open a stack with scripting errors that causes a crash. In msg box:
+answer file "Select a stack to review:"; lock messages; open stack it
+----
+Add vertical scroll bar to a card: group objects, object > properties Inspector, check vertical scrollbar.
+----
+put url "http://www.yourserver.com/nameofwebpage.php" into fld "Listing"  --webpage text into LC field
+----
+try  --try/catch any error
+  put value(fld "AnswerField") into fld "UserResult"  --success
+  catch errornum  --if LC error
+  answer "Sorry, wrong input. Try again." with "OK" titled "Error"
+end try
+----
+put random(6) + 4  --random 5 to 10 inclusive (1+4 to 6+4)
+----
+set the dontSearch of cd 1 of stack "MySubstack1" to "true"  --find searches mainstack only, not substack
+set the cantDelete of stack "MySubstack1" to "false"  --allow delete substack
+delete stack "MySubstack1"  --delete substack
+----
+function absolutePath pRelativePath
+  put the effective fileName of this stack into tPath
+  set the itemDel to "/"
+  put pRelativePath into item -1 of tPath
+  return tPath
+end absolutePath
+----
+--math in datagrid:
+put the dgData of grp "DataGrid 1" into tData  --array
+put "0" into tSum
+repeat for each key i in tData
+  add tData[i]["Price"] to tSum  --sum column "Price"
+end repeat
+answer "Total:" && tSum
+----
+set the fileName of player "DesktopSound" to pathBase() & "/pop.wav"  --play sound
+
+function pathBase  --file path base
+   set the itemDel to "/"
+   if environment() = "mobile" then return specialFolderPath("engine")
+   else return item 1 to -2 of the effective fileName of this stack
+end pathBase
+----
+on mouseUp  --read from spreadsheet (as tab-delimited txt file) and manipulate
+   local tData
+   answer file "Please select the .txt tab-delimited spreadsheet file."
+   if it = empty then exit to top
+   put url ("file:" & it) into tData  --all-English text
+   replace tab with ", " in tData
+   put tData into fld "A"
+end mouseUp
+----
+put value("myFunction(23,Dog)",card 2 of this stack)  --call remote function
+----
+the dgText["true"]  --keys/columnHeaders in line 1
+the dgText["false"]  --no keys/columnHeaders
+the dgText["false"] = the dgText
+----
+--put the dgText["true"] of grp "DataGrid 1" into tData  --extract data with keys/columnHeaders in line 1
+--set the dgText["true"] of grp "DataGrid 1" to tData  --insert data with keys/columnHeaders in line 1
+--OR
+--put the dgText["false"] of grp "DataGrid 1" into tData  --extract, no keys/columnHeaders
+--put "Cat" &tab& "Check" &tab& "Expand" &tab& "Label" &tab& "Num" &tab& "Wrap" into tKeys
+--set the dgText["true"] of grp "DataGrid 1" to tKeys &cr& tData --insert, keys/columnHeaders in line 1
+----
+--the dgText["true"] property doesn't set the columnHeaders labels, use the dgProp["column labels"] property.
+--set the dgProp["column labels"] of grp "DataGrid 1" to "Name" &cr& "Address" &cr& "Phone"  --cr delimited column labels
+----
+on mouseDoubleUp  --in row behavior script of dg form, copy data from dg form to a fld on a substack
+   put the dgHilitedLines of me into pLineNumber
+   put the dgDataOfLine[pLineNumber] of me into tRecord
+   if tRecord["ContactID"]  = empty then exit to top
+
+   put tRecord["ContactID"] into fld "ContactId" of stack "CustomerContactEdit"
+   put tRecord["CustomerID"] into fld "CustomerId" of stack "CustomerContactEdit"
+   put tRecord["Title"] into fld "Title" of stack "CustomerContactEdit"
+   put tRecord["FirstName"] into fld "FirstName" of stack "CustomerContactEdit"
+
+   set the loc of stack "CustomerContactEdit" to the loc of this stack
+   modal stack "CustomerContactEdit"
+   show stack "CustomerContactEdit"
+end mouseDoubleUp
+----
+dispatch "SetDataOfIndex" to grp "DataGrid 1" of cd "Main" with gCurrentIndex, "Check", true   --update one row in a large datagrid form
+----
+put pData into url ("binfile:" & specialfolderpath("documents") & "/images50.zip")  --ok all desktops, android, ios
+----
+set the defaultStack to stack "MyOtherOpenStack"  --set to the name of the desired stack to search before running the find command 
+----
+set the imageData of image id 2234 to the imageData of image id 2234  --reduce image k-size in stack
+----
+on mouseUp  --group several controls
+   put "Button1" &cr& "Button2" &cr& "Field3" into tControlList  --line list of controls
+   repeat for each line i in tControlList
+      set the selected of control i to "true"
+   end repeat
+   group  --group selected controls
+   select empty
+end mouseUp
+
+on mouseUp  --group several controls
+  group btn "Red" and btn "Blue" and btn "Green"
+  set the name of last group to "Colors"
+end mouseUp
+----
+set the text of button "ColorTabs" to "Red" &cr& "Blue" &cr& "Yellow"  --change names on tab panel menu
+----
+on mouseUp  --trigger custom command at a specific future time
+  sendCommandInTime "YourHandler","4:00 PM"
+end mouseUp
+
+on SendCommandInTime pHandler,pTime
+  convert pTime from time to secs
+  put pTime - seconds() into SecsToLapse
+  if SecsToLapse > "0" then send pHandler to target() in SecsToLapse secs
+end SendCommandInTime
+----
+on mouseUp  --delete all cds except start card
+   lock screen
+   push card
+   repeat with i = number(cards of this stack) down to 2
+      go card i of this stack
+      delete card i of this stack
+   end repeat
+   pop card
+   put number(cards of this stack)  --1
+end mouseUp
+----
+on mouseUp  --replace old text with new
+   put "Apple. Apple, Apple!" into tText
+   put replaceText(tText,"Apple","Orange")   --Orange. Orange, Orange!
+end mouseUp
+----
+repeat 1000
+  doSomethingComplicatedAndTimeConsuming
+  wait 0 millisec with messages  --allow engine time to process during tight repeat loop
+end repeat
+----
+on CenterV  --center text vertically
+   put the long id of fld "A" into MyFld
+   put the effective textSize of MyFld into tTextSize
+   put round((tTextSize - 22) * 1/3) into tKorr
+   put the formattedHeight of char 1 to - 1 of MyFld into MyFormattedHeight
+   put (the height of MyFld - MyFormattedHeight) / 2 into MyVerticalMargins
+   put MyVerticalMargins - tKorr into tTopMargin
+   put MyVerticalMargins + tKorr into tBotMargin
+   set the margins of MyFld to 8,tTopMargin,8,tBotMargin
+end CenterV
+----
+on focusIn  --focusIn/focusOut for locked flds
+  set the backgroundColor of fld "A" to "Red"  --or: backgroundPattern of fld "A" to icon id xxxx
+end focusIn
+
+on openField  --openField/exitField for unlocked flds
+  set the backgroundColor of fld "A" to "Red"  --or: empty
+end openField
+----
+--radio button skin/style
+1) Import .png images for the unselected and selected radio button.
+2) Place radio button on a card, double-click for its properties Inspector > icons & border.
+3) Enter the id of the unselected image in the first box (icon), enter the id of the selected image in the second box (hilited icon).
+4) Inspector > text formatting, align: choose right or left justified and margin: 4 to 30 for desired effect.
+----
+on arrowKey tKey  --place in dg group script (not row behavior script)
+   beep
+end arrowKey
+----
+put fld "A" into fld "B"  --transfer text
+put the text of fld "A" into fld "B"  --transfer text
+put the htmlText of fld "A" into fld "B"  --transfer FORMATTED text
+set the htmlText of char 1 to 10 of fld "A" to the htmlText of fld "B"  --transfer formatted text
+set the styledText of char 1 to 10 of fld "A" to the styledText of fld "B"  --same thing
+set the htmlText of line 1 of fld "A" to "<p><b>"&& line 1 of fld "A" &&"</b></p>"  --create formatted text
+set the htmlText of fld "A" to "<p><u>This is a test.</u></p>" &cr& "This is some additional unformatted text."  --create formatted text
+----
+put number(lines of fld "A")  --cr delimited lines, paragraphs.
+put number(lines of the formattedText of fld "A")  --rows, apparent wrapped lines
+----
+on functionKey tKey  --intercept function key
+  if tKey = "11" then send "mouseUp" to btn "BttF11"  --btn
+  else if tKey = "12" then MakeSomething  --custom command
+  else pass functionKey
+end functionKey
+----
+put the dgData of grp "DataGrid 1" into tData  --array
+put "1" into tIndex  --first index of array, use repeat loop for all indexes
+set the htmlText of fld "Description" to tData[tIndex]["Descrip"]
+set the text of fld "Price" to tData[tIndex]["Col2Name"]
+set the text of fld "Qty" to tData[tIndex]["Col3Name"]
+----
+on preOpenCard  --place in stack script, label & title are synonyms
+  set the label of this stack to the short name of this stack &","&& the short name of this cd  --each cd is named in the window title
+  pass preOpenCard
+end preOpenCard
+----
+--Application Icon
+You can use the free and very powerful graphics app GIMP for making Windows icons easily, making each icon size as a different layer and then exporting as an .ico file: http://gimp-tutorials.net/How-to-make-a-picture . Once you have your .ico file, you can open it in Apple's Preview app, and Save As ICNS to get the format Apple requires, so you'll have icons for both platforms. If also deploying to Linux, being an OS that favors simple open formats your original .PNG file will be fine there, just specify it in your .desktop file (see LiveCode's own .desktop file for an example).
+----
+set the customKeys of this stack to empty  --delete ALL custom props in the current custom prop set, other objects still retain their custom props
+set the customKeys of btn "Tools" to empty  --same
+----
+put the customKeys of btn "Tools" into Box1  --delete ONE custom property in the current custom property set
+delete line lineOffset("cMyProperty3",Box1) of Box1
+set the customKeys of btn "Tools" to Box1
+----
+on keyDown tKey  --in fld script, convert to upper case while typing
+   put toUpper(tKey) into the selection
+end keyDown
+----
+on deleteCard  --in stack script
+  send "UpdateNav" to this stack in 10 ticks  --send msg AFTER cd is deleted
+  pass deleteCard
+end deleteCard
+----
+on mouseUp  --trigger send in time
+   if pendingMessages() <> empty then exit mouseUp  --currently sending
+   answer "Danger icon from Default Patterns that comes with LiveCode." with "OK" titled "Danger!"
+   send "DimObject 0,false" to me in 2 ticks
+end mouseUp
+
+on DimObject Dim,Reverse
+   if Dim < "100" and Reverse = "false"  then add 1 to Dim
+   else if Dim > "0" and Reverse = "true" then subtract 1 from Dim
+   if Dim = "100" then put "true" into Reverse
+   set the blendLevel of me to Dim  --0 to 100
+   send "DimObject Dim,Reverse" to me in 2 ticks  --continue sending
+   if commandKey() = "down" or Dim = "0" then cancel item 1 of last line of pendingMessages()  --failsafe
+end DimObject
+----
+--send in time using script local to do two operations simultaneously
+local WH = "40", BL = "100"  --defaults
+on mouseUp  --trigger send in time
+   if pendingMessages() = empty then send "ZoomInPic" to me in 2 ticks
+end mouseUp
+
+on ZoomInPic
+   if WH < "130" then add 1 to WH  --40 to 130
+    if BL > "0" then  --100 to 0
+      subtract 1 from BL
+      set the width of img "Globe" to WH
+      set the height of img "Globe" to WH
+      set the loc of img "Globe" to "287,405"
+      set the blendLevel of img "Globe" to BL
+      send "ZoomInPic" to me in 2 ticks  --continue sending
+    else if BL = "0" then
+       put "40" into WH  --default
+       put "100" into BL  --default
+       cancel item 1 of last line of pendingMessages()  --stop sending
+    else if commandKey() = "down" then cancel item 1 of last line of pendingMessages()  --failsafe
+end ZoomInPic
+----
+on mouseUp  --LC version, system version
+   put systemVersion() into tSystem
+   if word 1 of tSystem = "NT" then put item itemOffset(tSystem,"NT 5.1,NT 6.0,NT 6.1,NT 6.2,NT 6.3,NT 10.0") of "XP,Vista,7,8,8.1,10" into tSystem  --pc
+   put "LiveCode" && version() &","&& platform() && "OS" && tSystem
+end mouseUp
+----
+if there is not a file (specialFolderPath("desktop") &"/Snapshot1.jpg") then
+   export snapshot from rect (the effective rect of this stack) to file (specialFolderPath("desktop") &"/Snapshot1.jpg") as JPEG  --stack with decorations
+   answer "A snapshot of this stack is on the desktop." with "OK" titled "Snapshot Taken"
+end if
+----
+repeat while there is a file (specialFolderPath("desktop") &"/"& tSnap &".png")
+   add 1 to word 2 of tSnap  --chart x
+end repeat
+export snapshot from grp tGrp to file (specialFolderPath("desktop") &"/"& tSnap &".png") as PNG
+if result() <> empty then answer "Sorry, there was a problem taking a snapshot." with "OK" titled "Snapshot Error"
+else answer "Successfully placed" &&quote& tSnap & ".png" &quote&& "on the desktop." with "OK" titled "Snapshot Chart"
+----
+export snapshot from rect (the effective rect of this stack) to file (specialFolderPath("desktop") &"/Snapshot1.jpg") as JPEG  --stack with decorations
+export snapshot from rect (the rect of this stack) to file (specialFolderPath("desktop") &"/Snapshot1.jpg") as JPEG  --stack window
+export snapshot from rect "2,45,263,442" of window (the windowID of this stack) to file (specialFolderPath("desktop") &"/Snapshot1.jpg") as JPEG  --rect
+--...from rect (the rect of this cd) or ...from rect (the rect of fld "Notes")  --NOT image expected, these rects are relative to cd instead of screen.
+export snapshot to file (specialFolderPath("desktop") &"/Snapshot1.jpg") as JPEG  --cross-hairs to click/drag a rect to capture
+export snapshot from this cd to file (specialFolderPath("desktop") &"/MyCard.jpg") as JPEG
+export snapshot from grp "Preferences" to file (specialFolderPath("desktop") &"/Snapshot1.png") as PNG  --group
+export snapshot from fld "Notes" to file (specialFolderPath("desktop") &"/Snapshot1.png") as PNG  --field
+export snapshot from fld "Notes" to MyPicture1 as PNG  --container
+export snapshot from group "XXX" to file "XXX.png" as PNG  --to default folder
+
+import snapshot from rect "2,45,263,442" of window (the windowID of this stack)
+import snapshot  --cross-hairs to click/drag a rect to capture
+import snapshot from grp "Preferences"  --group
+import snapshot from fld "Notes"  --field
+----
+on preOpenStack  --in standalone stack script
+   if environment() = "standalone application" then set the loc of this stack to screenLoc()  --center
+  pass preOpenStack
+end preOpenStack
+----
+Change the contents of a data grid with the dgText[ ] property. It has tab-delimited items and return-delimited lines. dgText["true"] includes the data grid keys/columnHeaders in line 1.
+
+put the dgText["true"] of grp "DataGrid 1" into tData
+set the itemDel to tab
+--make changes to tData here
+set the dgText["true"] of grp "DataGrid 1" to tData
+send "RefreshList" to grp "DataGrid 1"
+----
+LiveCode Latest Version: http://downloads.livecode.com/livecode/
+Data Grid Lessons: http://lessons.runrev.com/m/datagrid
+Data Grid Guide PDF: http://lessons.runrev.com/s/lessons/m/datagrid/pdf
+Basics of LiveCode: http://www.hyperactivesw.com/revscriptconf/scriptingconferences.html
+LiveCode Lessons: http://lessons.runrev.com/s/lessons/m/4071
+LiveCode Support: support@runrev.com
+LiveCode Bug Report: http://quality.runrev.com/
+----
+--relative file path: folder "DataFiles" at same level as stack/standalone, contains 5-number unique data/prefs file
+   set the itemDel to "/"
+   put item 1 to -2 of (the effective fileName of this stack) &"/DataFiles" into RelativePath  --path to stack folder
+   set the itemDel to comma  --default
+   if there is not a folder RelativePath then new folder RelativePath  --new folder
+   put "Hello. This is a test." into url ("file:" &RelativePath &"/Test18934.txt")  --relative path, all-English text
+   if result() <> empty then answer "Sorry, but there was a problem writing to a .txt file." with "OK"
+----
+prepare image file "/Disk/Folder/Logo.jpg"  --preload large image improving speed
+----
+on mouseUp  --format number with commas
+   ask "Please enter a number >= 1000." with "1234567891234.5678" titled "Format With Commas"
+   if it = empty then exit to top
+   put it &&"="&& MoneyFormat(it) into msg
+end mouseUp
+
+function MoneyFormat TheValue  --123456789.9876 to $123,456,789.99
+   local TheDecimal
+   set the numberFormat to "0.00"  --money
+   put TheValue * 1 into TheValue  --calc to convert
+   set the itemDel to "."
+   if item -1 of TheValue <> empty then
+      put item -1 of TheValue into TheDecimal
+      delete item -1 of TheValue  --decimal number
+   end if
+   set the itemDel to ","  --default
+   repeat with i = length(TheValue)-3 down to 3 step -3
+      put comma after char i of TheValue
+   end repeat
+   set the numberFormat to "0.######"  --default
+   return "$"& TheValue &"."& TheDecimal  --money
+end MoneyFormat
+----
+send "clearVideo LayerAlpha, baseLayer, LayerGraphic, LayerAudio" to me in .5 sec  --custom command with params triggered later.
+----
+set the dgProp["scroll selections into view"] of grp "DataGrid 1" to "false"  --in msg box, stop datagrid scroll jump
+put the dgProp["row template"] of grp "DataGrid 1"  --substack cd used by datagrid
+--assign different row template to a data grid:
+set the dgProp["row template"] of grp "DataGrid 1" to the long id of group id 1003 of card id 1002 of stack "Data Grid Templates 1390154616912"
+----
+set the dgText of grp "DataGrid 4" to empty  --delete contents of dg
+----
+--insert line of data into a data grid TABLE or FORM with column headers
+get the dgText["true"] of grp "DataGrid 1"
+put number(lines of it) into tNumLines
+put YourTabDelimitedDataLine into line (tNumLines + 1) of it
+set the dgText["true"] of grp "DataGrid 1" to it
+----
+--search dg table
+local tSearchString, tData
+put "Apples" into tSearchString  --string to search for
+put the dgText["false"] of grp "DataGrid 1" of this cd into tData  --dg text into variable, no keys/columnHeaders
+--"*" allows match to any chars before or after tSearchString. (hits whiteWhale, Whalebone, whiteWhalebone)
+filter tData with ("*" & tSearchString & "*")  --remove all lines except those containing search string
+if tData = empty then answer "Sorry, nothing matching" &&quote& tSearchString &quote&"." with "OK"
+else set the dgText["false"] of grp "DataGrid 2" to tData  --display matching data in second dg table
+----
+on preOpenCard  --cd 1 script
+   set the tool to "Browse"  --run mode arrow
+end preOpenCard
+----
+set the loc of stack "Modal1" to the loc of this stack  --center modal dialog over main stack
+modal stack "Modal1"  --substack to modal dialog
+----
+lock messages  --change the current tab of a tabbed button:
+set the menuHistory of btn "TabMenu" to "1"  --tab1 = current tab, menuPick msg blocked
+----
+--Skins and dragging
+--handles the dragging but also prevents dragging below the top visible bounds of the monitor (accounting for the menu bar on OS X and
+--the top panel on Linux) - just put this script in whatever graphic, button, or other object you're using for your drag region:
+
+local sDownDelta  --script local
+on mouseDown
+   put the clickLoc into sDownDelta
+end mouseDown
+
+on mouseMove x,y
+   if sDownDelta = empty then exit mouseMove
+   put item 1 of the screenMouseLoc into x
+   put item 2 of the screenMouseLoc into y
+   switch platform()
+      case "MacOS"
+         put item 2 of the windowBoundingRect into tMinY
+         break
+      case "Linux"
+         put 24+ item 2 of the screenRect into tMinY
+         break
+      case "Win32"
+         put 0 into tMinY
+   end switch
+   put item 1 of the windowBoundingRect into tMinX
+   set the topleft of this stack to max(tMinX, (x-item 1 of sDownDelta)),max(tMinY, (y-item 2 of sDownDelta)) 
+end mouseMove
+
+on mouseRelease
+      put empty into sDownDelta
+end mouseRelease
+
+on mouseUp
+   put empty into sDownDelta
+end mouseUp
+----
+on preOpenStack  --place in stack script
+   set the acceleratedRendering of this stack to "true"  --highest quality motion
+end preOpenStack
+----
+set the layerMode of grc "Ball1" to "dynamic"  --dynamic/static, for objects that move
+----
+move grc "Ball1" [from tStartLoc] to tEndLoc in 2 secs [without waiting  --script continues during move]
+move grc "Ball1" relative "50,50" in 2 secs [without waiting]
+move grc "Ball1" to the effective points of graphic "Polygon2" in 2 secs [without waiting]
+move grc "Ball1" to tPointsList in 2 secs [without waiting]
+----
+Not all graphics have points. Use the effective points property and LC will calculate points for all graphics.
+----
+--animate, animation:
+1. set the loc of image "Fox" to "100,150"  --less delay than move command, noticeable with images.
+2. set the icon of btn "Bunny" to "1070"  --image id = 1070, at the top of image's properties inspector.
+Animate with a button by changing the icon to different image ids. File > import as control > image file. Or paste image. Png images have transparency. Place on "Images" card or hide. Set the lockLoc property of resized images to preserve the scaled size. Shift-drag to scale smaller. Set the resizeQuality to "Best" to improve screen display.
+3. Allow current move commands to end before going to another card, or exit the handler immediately after the go command.
+4. Be able to cancel send-in-time messages before going to another card.
+----
+on mouseMove x,y  --move object with mouse
+  set the loc of grc "YourGraphic" to x,y
+end mouseMove
+----
+on mouseDown  --make one obj/group follow another. In script of btn "Leader":
+   grab me
+end mouseDown
+
+on mouseMove x,y
+   set the loc of grp "Follower" to the bottomRight of me
+end mouseMove
+----
+local sRotation  --script local
+on mouseDown  --rotate an image
+  put "true" into sRotation     
+end mouseDown
+
+on mouseUp
+  put "false" into sRotation  --exit
+end mouseUp
+
+on mouseRelease
+  mouseUp
+end mouseRelease
+
+on mouseMove X,Y  --better than mouseStillDown
+  if sRotation = "false" then exit mouseMove
+  put item 1 of the loc of image 1 into lmageLocX
+  put item 2 of the loc of image 1 into ImageLocY    
+  put (X - lmageLocX) *-1 into DiffX
+  put (Y - lmageLocY) into DiffY
+  if X < lmageLocX then set the angle of image 1 to (atan(DiffY/DiffX)*180/pi)
+end mouseMove
+----
+lock moves  --move two objects together
+move btn 1 to "300,200" in 2 secs without waiting
+move fld 1 to "0,0" in 2 secs without waiting  --nothing moves yet
+unlock moves  --now both objects move together
+wait 2.5 secs without waiting  --allow moves to finish
+----
+lock moves  --move multiple objects together
+move btn 1 from "454,153" to "454,205" in 2 secs without waiting
+move btn 2 from "454,205" to "554,205" in 2 secs without waiting
+move btn 3 from "554,205" to "654,205" in 2 secs without waiting
+move btn 4 from "654,205" to "750,205" in 2 secs without waiting
+unlock moves  --all objects move together
+wait 2.5 secs without waiting  --allow moves to finish
+----
+on mouseUp  --move object
+   move grc "Ball1" to "50,50" in 5 secs  --move on screen
+   set the loc of grc "Ball1" to "255,298"  --instant relocation
+end mouseUp
+--move grc "Ball1" to "100,100" in 5 secs  --script waits until move completes
+--move grc "Ball1" to "100,100" in 5 secs without waiting  --script continues during move
+--move grc "Ball1" relative "-150,-150" in 5 secs  --left,up
+--stop moving grc "Ball1"
+--put the movingControls()  --line list of controls being moved by move command
+--lock moves, unlock moves  --enable multiple objects to move together
+----
+on mouseDown  --drag object to another
+  grab me
+end mouseDown
+
+on mouseUp
+   if the loc of me is within the rect of btn "TrashCan" then put "I made it!"
+end mouseUp
+----
+on mouseDown  --in cd script, drag object "Test1"
+   if target() contains "Test" then grab target()
+   else pass mouseDown
+end mouseDown
+----
+set the loc of grp "A" of grp "B" to "50,50"  --refer to one group within another group
+----
+on mouseUp  --find number in a line list with Array
+  put fld "NumbersList" into tList  --name score
+  repeat for each line i in tList
+    put word 2 of i into TheArray[word 1 of i]
+  end repeat
+  answer "John's score:" && TheArray[John]  --1155 score
+end mouseUp
+----
+--consecutive footnote numbers follow punctuation, raised slightly in superscript, corresponding info placed at bottom of page or end of text.
+set the textShift of char -1 of line -7 of fld "A" to "-3"  --superscript, for footnotes
+set the textShift of last char of word 3 of fld "A" to "3"  --subscript
+set the textShift of last char of word 3 of fld "A" to "-3"  --superscript
+set the textShift of last char of word 3 of fld "A" to "0"  --normal
+----
+if the hilite of btn "Speech" of cd 1 then revSpeak "Hello, how are you today."  --speech restricted by checkbox btn
+--or...
+answer "Would you like speech?" with "No" or "OK" titled "Speech Engine"
+if it = "No" then revUnloadSpeech  --unload speech engine from memory, prevents all stack speech during current LiveCode session
+----
+--for speech in standalone, place in stack script
+on startup  --for standalone applications.
+   revLoadSpeech  --load speech engine into memory.
+  pass startup
+end startup
+
+on shutdown  --for standalone applications.
+   revUnloadSpeech  --unload speech engine from memory.
+  pass shutdown
+end shutdown
+----
+--change from default edit arrow to run arrow at open stack:
+on preOpenCard  --cd 1 script of mainstack
+  send "choose browse tool" to me in 1 tick  --run mode arrow
+  pass preOpenCard
+end preOpenCard
+----
+on menuPick pItem  --in group script, values from a group of two option menus determine data used from a field:
+   local tChoiceA, tChoiceB
+   put the label of btn "ChoiceA" into tChoiceA
+   put the label of btn "ChoiceB" into tChoiceB
+   if tChoiceA = "Choice 1" and tChoiceB = "Choice 1" then answer tChoiceA & " / " & tChoiceB &":"&& line 1 of fld "Data" with "OK"
+end menuPick
+----
+  put "SM" into SelectedSize
+  set the hilite of btn "Small" of cd "Sizes" to (SelectedSize contains "S")  --hilite correct checkbox
+  set the hilite of btn "Medium" of cd "Sizes" to (SelectedSize contains "M")
+  set the hilite of btn "Large" of cd "Sizes" to (SelectedSize contains "L")
+end openStack
+----
+put the keys of tArray into tKeys
+sort tKeys numeric  --sort array before using
+repeat for each line i in tKeys
+-- do stuff
+end repeat
+----
+--auto-update menu btn for folders/files:
+--tFolder = content
+--FilesOrFolders = "files" or "folders"
+on mouseEnter  --in menu btn script
+  put ("C:/any valid folder path/" & the text of fld "A") into tFolder
+  put GetFolderContent(tFolder,"folders") into me
+end mouseEnter
+
+function GetFolderContent tFolder,FilesOrFolders
+  put the folder into tOldDir
+  set the folder to tFolder
+  if FilesOrFolders = "files" then put the files into tRetValue
+  else put the folders into tRetValue  --folders even if 2nd param empty
+  set the folder to tOldDir  --reset
+  return tRetValue
+end GetFolderContent
+----
+on mouseUp  --hilite word being spoken
+   get fld "A"
+   repeat with i = 1 to number(words in it)
+      select word i of fld "A"
+      revSpeak word i of it
+      wait 1 sec
+    end repeat
+end mouseUp
+----
+on mouseUp  --remove duplicate lines (fast) Method 1
+   put deleteDuplicateLines(fld 1) into noDupes
+   put number(lines in fld 1) &&  number(lines in noDupes) into msg
+end mouseUp
+
+function deleteDuplicateLines tList
+   split tList by cr and space
+   combine tList by cr and space
+   replace space & cr with cr in tList
+   delete char -1 of tList
+   return tList
+end deleteDuplicateLines
+----
+on mouseUp  --remove duplicate lines (fast) Method 2
+   if fld "A" = empty then
+      answer "Sorry, please enter a line list with duplicates." with "OK" titled "Remove Duplicate Lines"
+      exit to top
+   end if
+   get fld "A"
+   filter lines of it without empty  --remove blank lines
+   split it by cr and space
+   combine it by cr and space
+   replace space & cr with cr in it
+   delete char -1 of it
+   put it into fld "A"
+end mouseUp
+----
+on mouseUp  --remove duplicate lines (fast) Method 3
+    set the caseSensitive to "true"  --or "false" for apple & Apple
+    put fld 1 into tTemp
+    put empty into tArray
+    repeat for each line i in tTemp
+       add 1 to tArray[i]
+    end repeat
+    put keys(tArray) into fld 2
+end mouseUp
+----
+get fld "A"  --comma-delimited return-line list
+split it by column  --convert it to array
+put it[1]  --column 1 only
+----
+function billableTime AccruedTime  --round up to nearest 15 minutes
+    local tHours, tRemainder
+    put trunc(AccruedTime) into tHours
+    put AccruedTime - tHours into tRemainder
+    if tRemainder = "0" then return tHours && "Hrs"
+    else if tRemainder <= ".25" then return tHours && "Hrs: 15 Mins"
+    else if tRemainder <= ".5" then return tHours && "Hrs: 30 Mins"
+    else if tRemainder <=  ".75" then return tHours && "Hrs: 45 Mins"
+    else return tHours + 1 && "Hrs"
+end billableTime
+----
+on openCard  --check for internet connection:
+   get url ("http://www.google.com/?x=" &  the millisec)
+   if it = empty then put "No Internet Connection"
+   else put "Connected To Internet"
+end openCard
+----
+set the behavior of btn 2 to the long id of btn 1  --common scripts using behavior, btns only
+----
+answer file "Select a ZIP archive:" with type "Zip archive|zip|"  --only zip files
+put it into tSelectedZipFile
+----
+set the textShift of char 1 to -1 of fld "A" to -6  --adjust vertical of text within a line
+----
+on scrollbarDrag  --multiple sliders at specific values
+   if round(the thumbpos of scrollbar 1) = "49" & \
+         and round(the thumbpos of scrollbar 2) = "47" & \
+         and round(the thumbpos of scrollbar 3) = "45" then
+      answer "All settings are optimal." with "OK"
+   end if
+end scrollbarDrag
+----
+on openCard  --hilite a datagrid line
+  set the dgHilitedLines of grp "States" to "3"  --hilite 3rd line
+end openCard
+----
+on mouseUp  --numberFormat requires a calculation
+   set the numberFormat to "0.00"
+   ask "Please enter a number." with "127.38"
+   if it = empty then exit to top
+   if it is a number then answer "$"& it + 0 with "OK"
+   else answer "Sorry, that's not a number." with "OK"
+end mouseUp
+----
+on suspendStack  --reposition answer & ask dialogs
+   if "Answer Dialog" is among the lines of openStacks() then set the topLeft of stack "Answer Dialog" to "100,100"  --reposition
+   if "Ask Dialog" is among the lines of openStacks() then set the topLeft of stack "Ask Dialog" to "100,100"  --reposition
+   pass suspendStack
+end suspendStack
+----
+on mouseUp  --auto-close answer dialog without clicking OK or Cancel btns
+  send "CloseAnswerDialog" to me in 5 secs
+  answer "This is a test for auto-closing the answer dialog." with "OK" titled "Answer Dialog Test"
+end mouseUp
+
+command CloseAnswerDialog
+  close stack "Answer Dialog"
+end CloseAnswerDialog
+----
+on mouseup  --manage double-click & single-click in one handler
+   wait 20 ticks  --blocking
+   if mouseClick() then
+      beep 2
+      --doDoubleStuff
+   else
+      beep 1
+      --doSingleStuff
+   end if
+end mouseUp
+----
+on mouseUp  --command into msg box from script, use for answer or find.
+   put empty into msg  --clear, show msg
+   put "find" &&quote& "Yellow" &quote&& "in fld" &&quote& "A" &quote into fld 3 of stack "Message Box"
+   do fld 3 of stack "Message Box"  --execute cmd
+end mouseUp
+----
+--Requires fld "Suggestions" and store list of keywords as a custom property called "cTags" of text entry field "TextToFind", and this script
+on rawKeyUp pKey --auto-fill during text entry
+  put me into tString
+  if tString <> empty then
+    put the cTags of me into tLookups
+    filter tLookups with (tString & "*")
+    put tLookups into fld "Suggestions"
+  else put empty into fld "Suggestions"
+end rawKeyUp
+----
+disable btn "XYZ"
+wait 5 secs with messages  --clicks on disabled btn are discarded
+enable btn "XYZ"  --no clicks fire
+----
+repeat with i = 1 to number(btns of this cd)
+  disable btn i of this cd  --disable all btns on a cd
+end repeat
+----
+set the enabled of fld "A" to the hilite of btn "CheckBox1"  --disable a fld under specific condition
+----
+set the enabled of btn "A" to "false"  --disable/enable a btn or btn group.
+----
+disable menuItem 3 of btn "ColorMenu"  --disable/enable menuItem
+----
+if wordOffset(tWord,tText) > "0" then answer "Yes, it's here." with "OK"  --very fast find.
+else answer "No, it's not here." with "OK"
+----
+copy image "Fred" of cd "HiddenImageLibrary" to group "MyGroup"  --image used on multiple cds
+----
+--force video player to maintain its dimensions:
+set the lockLoc of player "MyPlayer" to "true"  --or inspector > size and position > Lock size and position.
+----
+--change video player's source with a text field:
+put the text of fld "VideoPath" into VPath
+set the fileName of player "MyPlayer" to VPath
+----
+on mouseUp  --first char of all words uppercase capital.
+   local Box1
+   put "apple pear orange kiwi plantane pineapple strawberry" into Box1
+   repeat with i = 1 to number(words in Box1)  --or number(lines in Box1)
+      put toUpper( char 1 of word i of Box1) into char 1 of word i of Box1
+   end repeat
+   put Box1
+end mouseUp
+----
+--draw user's attention to mistake in text:
+set the flagged of word 3 of fld "A" to "true"  --red dotted underline
+set the flagged of line 1 of fld "A" to "false"  --remove flag
+set the flagged of selectedChunk() to "true"  --flag selection of text
+----
+Box Text Paragraph:
+set the borderWidth of line 3 of fld "A" to "1"
+set the padding of line 3 of fld "A" to "5"
+set the backgroundColor of line 3 of fld "A" to "255,255,191"  --lightyellow
+set the leftIndent of line 3 of fld "A" to "10"
+set the rightIndent of line 3 of fld "A" to "10"
+----
+Ensure a stack's default textFont and textSize: object > stack inspector, basic properties > text formatting, choose font and size.
+----
+repeat with i = 1 to 33  --parentheses needed
+  set the lockText of fld ("Content" & i) to "true"
+end repeat
+----
+set the caseSensitive to "true"  --uppercase & lowercase must match
+find whole "S" in fld "A"  --finds S (not Smith, 's, s)
+OR
+set the caseSensitive to "true"  --uppercase & lowercase must match
+set the wholeMatches to "true"  --whole word (not partial)
+put lineOffset("S",fld "A")  --returns line #
+----
+on mouseUp--compare two strings for common words:
+   local Box1, Box2, CommonWords
+   put "apple pear orange" into Box1  --smaller string
+   put "kiwi plantane apple pineapple strawberry pear" into Box2
+   set the wholeMatches to "true"  --whole words for wordOffset
+   repeat for each word i in Box1
+      if wordOffset(i,Box2) > "0" then then put i &"," after CommonWords  -->word match
+   end repeat
+   delete last char of CommonWords  --comma
+   put CommonWords  --into msg box
+end mouseUp
+----
+on mouseUp--compare two lists for common lines:
+   local List1, List2, CommonLines
+   if number(lines in fld "A") <= number(lines in fld "B") then  --smaller in List1
+     put fld "A" into List1
+     put fld "B" into List2
+   else
+     put fld "B" into List1
+     put fld "A" into List2
+   end if
+   filter List1 without empty  --remove blank lines
+   filter List2 without empty
+   repeat for each line i in List1
+      if i is among the lines of List2 then put i &cr after CommonLines
+   end repeat
+   delete last char of CommonLines  --return
+   sort lines of CommonLines  --a-z
+   put CommonLines into msg box
+end mouseUp
+----
+--unordered and ordered lists in text
+set the listStyle of line 1 to 5 of fld "A" to "disc"  --disc, circle, square, decimal, empty
+----
+1) Create Link In Field Text (type in msg box)
+set the textStyle of word 2 of fld "A" to "link"  --link
+2) Create Destination
+set the linkText of word 2 of fld "A" to "http://www.livecode.com"  --website
+set the linkText of word 2 of fld "A" to "next cd"  --card
+set the linkText of word 2 of fld "A" to "This is a test."  --text
+3) Create Field Script
+on linkClicked TheLink  --linked hyperText
+   if TheLink contains "http://" then launch url TheLink  --website
+   else if TheLink contains "card" or TheLink contains "cd" then go TheLink  --card
+   else answer TheLink with "OK"  --text
+   if result() <> empty then answer "Sorry, there was a problem with the link." with "OK"
+end linkClicked
+----
+<! Enter comments here ->
+<stackFile>
+  <stack name="Example" rect="117,109,517,509">
+    <card>
+      <field name="Hello" rect="100,100,200,125:>
+        <text>Hello World>/text>
+       </field>
+    </card>
+  </stack>
+</stackFile>
+
+put revCreateXMLTree(tXMLText,true,true,false) into tTreeID  --fld
+put revCreateXMLTreeFromFile(tFilePath,true,true,false) into tTreeID  --file
+put revXMLAttribute(tTreeID,"/stackFile/stack","rect") into tRect
+put "Stack Rectangle:" && tRect into fld "A"
+----
+--data grid table contents:
+put the dgText["false"] of grp "DataGrid 1" into fld "A"  --dg to fld, no keys/columnHeaders
+set the dgText["false"] of grp "DataGrid 1" to fld "A"  --fld to dg
+put the dgText["false"] of grp "DataGrid 1" into url ("file:DGContent.txt")  --dg to .txt (all-English text)
+set the dgText["false"] of grp "DataGrid 1" to url ("file:DGContent.txt")  --.txt to dg (all-English text)
+----
+--data grid table header:
+set the dgProp["column labels"] of grp "DataGrid 1" to "Name" &cr& "Date" &cr& "Phone"  --cr delimited headers
+----
+--data grid table alignment:
+set the dgHeaderAlignment["col 1"] of grp "DataGrid 1" to "right"  --header
+set the dgColumnAlignment["col 1"] of grp "DataGrid 1" to "right"  --column
+----
+on mouseUp  --array to rearrange comma list  (faster)
+   local List1, List2, List3, List4
+   put "cat,dog,pig" into List1
+   put "feline,canine,porcine" into List2
+   put "catfood,dogfood,cornfeed" into List3
+   split List1 by comma
+   split List2 by comma
+   split List3 by comma
+   repeat for each key i in List1
+        put List1[i] &", "& List2[i] &", "& List3[i] &cr after List4
+    end repeat
+   answer List4 with "OK"
+end mouseUp
+
+on mouseUp  --repeat with i to rearrange comma list (slower)
+   local List1, List2, List3, List4
+   put "cat,dog,pig" into List1
+   put "feline,canine,porcine" into List2
+   put "catfood,dogfood,cornfeed" into List3
+   repeat with i = 1 to number(items of List1)
+      put item i of List1 &", "& item i of List2 &", "& item i of List3 &cr after List4
+   end repeat
+   delete last char of List4  --last return
+   answer List4 with "OK"
+end mouseUp
+----
+on mouseUp  --hilite found box
+    find string "my dog Spot"
+    get foundChunk()
+    if it <> empty then set the backgroundColor of it to "yellow"
+end mouseUp
+----
+on mouseUp  --find a comma list of words in text and color red
+   local tWords
+   put "dog,horse,pig,goose,cat" into tWords
+   repeat for each item i in tWords
+      find empty  --reset
+      repeat forever
+         find i in fld "A"  --find whole: dog, dog's (not dogs, doggie).
+         if foundChunk() = empty then exit repeat  --escape repeat
+         set the textColor of foundChunk() to "Red"
+         if commandKey() = "down" then exit to top  --failsafe
+      end repeat
+   end repeat
+end mouseUp
+----
+on mouseUp  --compute time difference
+   local Box1, Box2, tStart, tEnd
+   put "2:15 PM" into Box1
+   put Box1 into tStart
+   put "5:20 PM" into Box2
+   put Box2 into tEnd
+   convert tStart to dateItems
+   convert tEnd to dateItems
+   subtract item 4 of tStart from item 4 of tEnd  --hours
+   subtract item 5 of tStart from item 5 of tEnd  --minutes
+   convert tEnd to long time
+   answer "The time difference between" && Box1 && "and" && Box2 && "is" && word 1 of tEnd &"." with "OK"
+end mouseUp
+----
+--import image vs reference image
+if the fileName of image tImageName of cd "Assets01" of stack "AssetsStack" = empty then  --import (embed) image
+   put image tImageName of cd "Assets01" of stack "AssetsStack" into image "prepImage" of this cd
+else  --reference image
+  set the fileName of img "prepImage" of this cd to the fileName of image tImageName of cd "Assets01" of stack "AssetsStack"
+end if
+----
+on mouseup  --extract info from table fld
+   local tLine, tText, tValue, tItem
+   put word 2 of clickLine() into tLine
+   put value(clickLine()) into tText
+   put clickText() into tValue
+   set the itemDel to tab
+   put itemOffset(tValue,tText) into tItem
+   answer "You clicked column" && tItem && " of line" && tLine && "which contains" &&quote& tValue &quote with "OK"
+end mouseup
+----
+on mouseUp  --create fld, set rect, contents
+   create fld "xAxis"
+   set the rect of the last fld to "200,200,300,220"
+   put  the short name of the last fld into the last fld
+end mouseUp
+----
+on DoCheckShift  --repeating send in time message
+   set the hilite of btn "MultipleSelection" to (shiftKey() = "down")
+   if "DoCheckShift"  is not in pendingmessages() then send "DoCheckShift" to me in 150 milliseconds
+end DoCheckShift
+
+on closeCard  --delete send in time pending messages
+   repeat for each line i in pendingMessages()
+      if i contains "DoCheckShift" then cancel item 1 of i
+   end repeat
+   set the hilite of btn "MultipleSelection" to "false"
+end closeCard
+----
+lock screen  --formattedHeight and formattedWidth only from current cd.
+push cd
+go cd "DifferentCard"
+put the formattedHeight of fld "MyField" into Box1  --current cd
+pop cd  --back to original cd
+unlock screen
+----
+on mouseUp  --line list of files in folder
+     answer folder "Please select a folder..."
+     if it = empty then exit to top
+     put files(it) into tFiles
+     sort lines of tFiles international
+     put tFiles into fld "FilesList"
+ end mouseUp
+----
+on mouseUp  --divisors of x without fraction
+   local NumberList, Box1
+   put "250,300,350,400,450,500,550,600,650,700,750" into NumberList
+   repeat for each item i in NumberList
+      put i &":"&& testDivisors(i) &cr after Box1
+   end repeat
+   delete char -1 of Box1
+   put "Divisors Without Fraction" &cr& Box1
+end mouseUp
+
+function testDivisors X
+   local Box2
+   repeat with i = 1 to X
+      if X mod i = "0" then put i &"," after Box2  --no remainder
+   end repeat
+   delete char - 1 of Box2  --last comma
+   return Box2
+end testDivisors
+----
+Rather than importing videos, it's better to reference to an external video by creating a player control and setting its fileName to the file path of the external video file. You can also set the rect of the player control, which allows you to determine exactly where to display the video on your screen.
+
+put the effective fileName of this stack into FilePath
+set the itemDel to "/"
+put "Extras/Video1" into last item of FilePath
+set the fileName of player 1 to FilePath  --referenced video
+set the rect of player 1 to the rect of this card  --display rect
+----
+on openCard  --play video with player object
+  set the fileName of player "Videos" to specialFolderPath("desktop") & "/VidProjects/Vid01.mp4"
+  start player "Videos"
+end openCard
+----
+set the fileName of player "MyPlayer" to FilePath &"/Sound03.mp3"
+start player "MyPlayer"  --player object, referenced mp3
+----
+Play only uncompressed .AIFF and .WAV sound files.
+For other sound files, reference as an external file in a player object.
+----
+--file path to the correct folder to store preferences:
+function PrefsFolderPath
+   if platform() = "MacOS" then put specialFolderPath("preferences") into PrefsFolder 
+  else if platform() = "Win32" then put specialFolderPath(26) into PrefsFolder  --Application Data
+   else put specialFolderPath("home") into PrefsFolder  --Linux/Unix
+   if last char of PrefsFolder is not "/" then put "/" after PrefsFolder
+   return PrefsFolder
+end PrefsFolderPath
+----
+Win7 LiveCode preferences file is in: C:\Users\<username>\AppData\Roaming\RunRev\revPreferences
+Folder "AppData" is a hidden folder. F1 > "hidden file", show hidden files. Folder "Roaming" is specialFolderPath(26).
+----
+--relative file path to standalone application:
+put the effective fileName of this stack into FilePath
+set the itemDel to "/"
+put "DataStorage" into last item of FilePath
+set the itemDel to ","  --default
+if there is not a folder FilePath then new folder FilePath  --new subfolder
+if result() <> empty then
+  answer "Sorry, but couldn't create a sub-folder." with "OK"
+  exit to top  
+end if
+put TextData into url ("file:" & FilePath & "/Data.txt")  --all-English text
+----
+put fld "Notes" into url ("file:" & specialFolderPath("desktop") & "/MyNotes1.txt")  --all-English text
+----
+on mouseUp  --single checkbox button
+   if the hilite of me then put the label of me into fld "A"  --checked
+   else put empty into fld "A"  --unchecked
+end mouseUp
+----
+--complex if/then
+if <C1> or <C2> and <C3> or <C4> then  --evaluates to C1 or (C2 and C3) or C4.
+if (<C1> or <C2>) and (<C3> or <C4>) then  --evaluates to (C1 or C2) and (C3 or C4).
+----
+on mouseUp  --text to .rtf, open with default program
+   answer "Save this lesson to a Rich Text Format file on the desktop and open?" with "Cancel" or "OK" titled "Save Text"
+   if it = "Cancel" then exit to top
+   set the defaultFolder to specialFolderPath("desktop")
+   put the rtfText of fld "Lesson" into url ("file:Test.rtf")  --rich text format, all-English text
+   launch document "Test.rtf"  --with default app
+   if result() <> empty then answer "Sorry, there was a problem opening the file." with "OK" titled "Error"
+end mouseUp
+----
+Change a field's border color
+In fld's properties Inspector:
+1) Basic Properties > uncheck Three Dimensional property.
+2) Set the border width to "1".
+3) Colors & Patterns > borderColor, choose color.
+----
+set the number of this cd to "1"  --reposition current cd in stack
+----
+--Cascade Menu Item Button (properties inspector under Type)
+--Submenus PART A (properties inspector under Menu Items)
+Choice 1
+Choice 2
+<tab>Choice 2a
+<tab>Choice 2b
+Choice 3
+
+--Submenus PART B (in btn script)
+on menuPick X
+  set the itemDel to "|"
+  get item -1 of X
+  set the label of me to it
+  if it = "Choice 1" then answer "Choice 1." with "OK"
+  else if it = "Choice 2a" then answer "submenu Choice 2a." with "OK"
+  else if it = "Choice 2b" then answer "submenu Choice 2b." with "OK"
+  else if it = "Choice 3" then answer "Choice 3." with "OK"
+end menuPick
+----
+on mouseUp  --is now within time range: monday - friday, 11 am to 10 pm 
+   convert seconds() to dateItems  --dateItems uses 24 hr format
+   if item 7 of it = "1" or item 7 of it = "7" then answer "Sorry, closed today." with "OK"  --item7: 1 to 7 day. 1=sun, 7=sat
+   else if item 4 of it < "11" or item 4 of it > "22" then answer "Sorry, not open now." with "OK"  --11am = 11, 10pm = 22
+   else answer "Yes, we're open now. Monday thru Friday, 11 AM to 10 PM." with "OK"
+end mouseUp
+----
+put "Hello" into fld "3"  --invalid, name as number confuses LiveCode
+put "Hello" into fld "f3"  --valid, name is not a number
+put "Hello" into fld 3  --valid, refers to the fld's number, not its name
+put "Hello" into fld id 3231  --valid, refers to the fld's id, not its name
+----
+get wordOffset(tWordToFind,tText)
+if it > "0" then delete word it+1 to -1 of tText  --delete text after a word
+----
+import snapshot from 100,100,200,200  --screen capture
+import snapshot from btn 3  --image of btn
+export snapshot from btn 3 to file (specialFolderPath("documents") &"/SnapShot1.jpg") as JPEG
+export image "Sun" to file (specialFolderPath("documents") &"/MySun01.png") as PNG
+----
+if i mod 2 = "0" then  --even number
+if i mod 2 <> "0" then  --odd number
+if 2016 mod 4 = "0" then  --leap year
+----
+Rounded rectangle radius set in properties inspector or by script:
+set the roundRadius of graphic "RoundEdges" to "30"
+----
+set the numberFormat to "0.######"  --reset to default after using to avoid errors
+----
+Stuck Modal Dialog: ctrl-shift-rightClick, stack mode > topmost, edit substack to include a cancel button. Don't show a substack as modal until it's tested.
+on mouseUp  --cancel btn:
+  set the dialogData to "Cancel"
+  close this stack  --close modal dialog substack
+end mouseUp
+----
+on mouseUp  --file path with the effective fileName
+   set the itemDel to "/" 
+   set the defaultFolder to item 1 to -2 of (the effective fileName of this stack)
+   put the defaultfolder & "/Records.txt" into FilePath
+   put cr& "Hello" after url ("file:" & FilePath)  --all-English text
+end mouseUp
+----
+on preOpenStack  --update from folder "Data" .txt files, all-English text
+   set the itemDel to "/"  --set defaultFolder to stack folder
+   set the defaultFolder to item 1 to -2 of (the effective fileName of this stack)
+   put url ("file:Data/Display.txt") into fld "Display" of cd "Initial" 
+   put url ("file:Data/Details.txt") into fld "Details" of cd "Params"
+   put url ("file:Data/Entries.txt") into fld "Entries" of cd "Prefs"
+   put url ("file:Data/Choice.txt") into fld "Choice" of cd "Prefs"
+end preOpenStack
+----
+get anyFunction()  --function returns value into "it" 
+if it > "23" then put it  --conditional use of function
+----
+--call function not in message path:
+put value("myCustomFunction", stack "DifferentStack") into Box1
+----
+set the wholeMatches to "true"  --hit only on exact match
+if SearchWord is among the words of Buffer then answer "Found" && SearchWord with "OK"  --words of, items of, lines of
+----
+Escape unwanted stack messages while error testing: development > suppress messages
+----
+Pull-down menu can be edited in tools > MenuBuilder OR the menu btn's properties Inspector.
+Pull-down menu special characters:
+-  --divider line
+!c  --checkmark menuItem
+!n  --uncheck menuItem
+!r  --diamond
+!u  --remove diamond
+&  --keyboard mnemonic
+(  --disable menuItem
+/  --keyboard shortcut
+tab  --sub menuItem.
+----
+Arrange multiple buttons: properties inspector palette changes to multiple buttons palette when a second button is selected (shift-click). The FIRST button selected specifies how the other selected buttons are arranged.
+----
+In script editor, double-click in error pane to hilite error location.
+----
+on resizeStack newWidth,newHeight,oldWidth,oldHeight
+   set the rect of fld 1 to the rect of this cd   --resize fld to cd size
+end resizeStack
+----
+on preOpenCard
+  set the menuHistory of btn "TabMenu" to "1"  --first tab
+  pass preOpenCard
+end preOpenCard
+----
+set the backgroundPattern of this cd to the id of img "BgImg2"  --or empty
+----
+on mouseUp  --files & folders
+  ask "Please enter a name to save as...:" titled "Save Entry"
+  if it = empty then exit to top
+  put it into tSavedName
+  put specialFolderPath("documents") & "/Colorlist.txt" into tFile
+  if there is a file tFile then put url ("file:" & specialFolderPath("documents") & "/Colorlist.txt") into tSavedFile  --all-English text
+   else put empty into tSavedFile
+  --new content:
+  put number(lines in tSavedFile) + 1 into tNextLine
+  set the itemDel to tab
+  put tSavedName into item 1 of line tNextLine of tSavedFile
+  put item 1 to 2 of fld "Color" into item 2 to 3 of line tNextLine of tSavedFile
+  put tSavedFile into url ("file:" & specialFolderPath("documents") & "/ColorList.txt")  --update file, all-English text
+  answer "The new entry was successfully saved to Colorlist.txt." with "OK"
+end mouseUp
+----
+on closeStack  --delete a temp text file
+     delete file specialFolderPath("desktop") & "/Temp.txt"
+ end closeStack
+----
+set the lockLoc of img "ResizedImage" to "true"  --prevent image reverting to original size (or lock size & position in Inspector).
+----
+put the formattedWidth of img "ResizedImage" into OrigWidth  --original
+put the formattedHeight of img "ResizedImage" into OrigHeight  --original
+----
+--resize graphic "DragArea" with drag:
+local sTopleft  --script local
+on mouseDown
+    put mouseLoc() into sTopleft
+    set the topLeft of graphic "DragArea" to sTopleft
+    set the visible of graphic "DragArea" to "true"
+end mouseDown 
+
+on mouseMove x,y
+   if sTopleft = empty then exit mouseMove
+   put sTopleft & "," & x & "," & y into tRect
+   set the rect of graphic "DragArea" to tRect
+end mouseMove
+
+on mouseUp
+    set the visible of graphic "DragArea" to "false"
+   delete local sTopleft  --remove script local from memory
+end mouseUp
+
+on mouseRelease
+   mouseUp
+end mouseRelease
+----
+on mouseMove x,y  --change colors if intersect() = "true"
+ if not DragOK then exit mouseMove
+ set the loc of target() to mouseLoc()
+ if intersect(target(),graphic "Pen") then set the backgroundColor of graphic "Pen" to "Red"
+ else set the backgroundColor of graphic "Pen" to "Blue"
+ end if
+end mouseMove
+----
+if shiftKey() = "down" then exit to top  --**failsafe in repeat forever loop
+answer "Test1:" && result()  --**debug code, stops execution.
+put "Test1:" && result() &cr after msg  --**debug code.
+----
+Upload stacks to RevOnline for users to download: while online, development > revOnline, signup for an account, enter email. Password emailed back. Then file > share this stack... to upload.
+----
+Group Geometry: individual objects of a group AND the group must all have the same geometry settings.
+----
+--Alternating Color Rows In List Field
+Set the backgroundPattern of the field to the id of an image that is the height of two rows in your list, 1st row color, second row white.
+----
+Button icons are not limited to a specific size. Any image can be used as an icon. The image can be in the stack, a substack, or referenced from a folder. Assign an icon from the button's properties Inspector > Icons and Border.
+----
+--menuPick message sent to menu and tab btns, not list fld.
+on menuPick ThisPick, PrevPick
+   answer "You chose" &&quote& ThisPick &quote&& "from a tab button."
+end menuPick
+----
+on preOpenCard  --pre-select a text chunk in one field
+   select line 1 of fld "A"  --list field
+   pass preOpenCard
+end preOpenCard
+----
+on mouseUp  --plot points on graph with freehand polygon
+   local PlotPoints
+   if there is no graphic 1 then
+      answer "Please place a freehand polygon on the card." with "OK"
+      exit to top
+   end if
+   get item 3 to 4 of the rect of me
+   put it &cr into PlotPoints
+   repeat 10
+      add 10 to item 1 of it
+      subtract 12 from item 2 of it
+      put it &cr after PlotPoints
+   end repeat
+   delete last char of PlotPoints  --return
+   set the points of graphic 1 to PlotPoints  --plot points
+end mouseUp
+----
+local Rotation  --Script Local container, rotate an image
+on mouseDown
+  put "true" into Rotation     
+end mouseDown
+
+on mouseUp
+  put "false" into Rotation
+end mouseUp
+
+on mouseRelease
+  mouseUp
+end mouseRelease
+
+on mouseMove X,Y  --better than mouseStillDown
+  if Rotation = "false" then exit mouseMove
+  put item 1 of the loc of image 1 into lmageLocX
+  put item 2 of the loc of image 1 into ImageLocY    
+  put (X - lmageLocX) *-1 into DiffX
+  put (Y - lmageLocY) into DiffY
+  if X < lmageLocX then set the angle of image 1 to (atan(DiffY/DiffX)*180/pi)
+end mouseMove
+----
+answer "This is a test." with "OK" titled "Statement..."  --answer or ask title
+----
+Object's properties Inspector: in edit mode, double-click object
+----
+on mouseUp  --color clicked line in fld
+   get clickLine()
+   if value(it) = empty then exit to top  --blank line
+   if the textColor of it = empty then set the textColor of it to "red"
+   else set the textColor of it to empty  --default color (black)
+end mouseUp
+----
+--Remove formatting from a field, reset to default:
+set the textFont of word 1 to -1 of fld "A" to empty  --default font, style, size
+set the textColor of word 1 to -1 of fld "A" to empty  --default color
+----
+A new card shows only the background groups of the previous card, keeping different backgrounds separate.
+----
+Add object to existing group:
+A) Select group, object > edit group.
+B) Place object, format, and script.
+C) Object > stop editing group.
+----
+go next cd of bg "One"  --nav within cds of a background group
+----
+put selectedLine(fld "Colors")  --line 1 of field 2
+put selectedText(fld "Colors")  --Black
+----
+set the showLines of fld "A" to "true"  --dotted baselines (fixedLineHeight must = "true")
+----
+put the effective fileName of this stack  --C:/Users/Terry/Documents/LiveCode/Lab.rev  --.rev, .livecode
+----
+put platform() into tOS  --MacOS, Win32, Linux
+----
+if version() >= "6.5.2" then  --LiveCode opensource
+if version() < "6.5.0" then answer "There is a newer free version of LiveCode available at livecode.com." with "OK"
+----
+on mouseUp  --remove all geometry settings from a stack
+     put the customPropertySets of this stack into myProps
+     filter myProps without "cREVGeometryCacheIDs"
+     filter myProps without "cREVGeometryCache"
+     set the customPropertySets of this stack to myProps
+     repeat with x = 1 to number(cards of this stack)
+          put the customPropertySets of cd x into myProps
+          filter myProps without "cREVGeometryCacheIDs"
+          filter myProps without "cREVGeometryCache"
+          set the customPropertySets of cd x to myProps
+          repeat with y = 1 to number of controls of cd x
+               put the customPropertySets of control y of cd x into myProps
+               filter myProps without "cREVGeometryCacheIDs"
+               filter myProps without "cREVGeometryCache"
+               filter myProps without "cREVGeometry"
+               set the customPropertySets of control y of cd x to myProps
+          end repeat
+     end repeat
+end mouseUp
+----
+put the substacks of this stack  --line list
+put the mainstack of this stack  --mainstack name
+put the owner of this stack  --equivalent
+if the owner of this stack = empty then  --mainstack
+----
+start using stack (specialfolderpath("documents") & "/MyLibrary.rev")  --full path name to start using without opening first
+----
+if there is a file (specialfolderpath("documents") & "/Test.txt") then put url ("file:" & (specialfolderpath("documents") & "/Test.txt")) into fld "A"  --all-English text
+----
+--Substack, Palette, Modal Dialog:
+--paste in substack's stack script to trap messages to mainstack handlers.
+--set substack prop inspector to "Purge stack on close".
+on preOpenStack  --trap for messages, no pass
+end preOpenStack
+on openStack
+end openStack
+on closeStack
+end closeStack
+on preOpenCard
+end preOpenCard
+on openCard
+end openCard
+on closeCard
+end closeCard
+
+An Alternative:
+on preOpenStack  --in mainStack's stack script
+   if the owner of this stack = empty then  --mainstack (block substack msgs including data grid substacks)
+   --mainStack commands...
+   end if
+   pass preOpenStack
+end preOpenStack
+
+Another Alternative:
+on preOpenStack  --in mainStack's stack script
+   if target() <> me then exit to top  --trap substack msgs
+   --mainstack commands...
+   pass preOpenStack
+end preOpenStack
+----
+--paste in modal dialog list field to simulate default btn "OK"
+on mouseDoubleUp  --default
+   send mouseUp to btn "OK"
+end mouseDoubleUp
+
+on returnInField  --default
+   send mouseUp to btn "OK"
+end returnInField
+----
+--paste in modal dialog default btn "OK":
+on mouseUp  --dialogs MUST include cancel and/or ok btn to close dialog
+   get selectedText(fld "B")
+   set the dialogData to "You selected" && selectedText(fld "B") &"."  --pass collected data to mainstack
+   close this stack  --allow mainstack script to continue
+end mouseUp
+
+--set the dialogData to the hilite of btn "Preference1"  --checkbox btn choice
+--set the dialogData to the hilitedButtonName of group "MyRadioBtns"  --radio btn choice
+--set the dialogData to selectedText(fld "B")
+
+--in mainstack, receive collected data:
+put the dialogData into msg box
+----
+--item list of "the properties" property
+put the properties of btn "Test" into Array1  --properties of any object
+put keys(Array1) into Box1  --line list of object properties
+sort Box1 by word 1 of each  --a-z
+replace cr with ", " in Box1  --lines to items (1, 2, 3, ...)
+put Box1 into fld "A"
+----
+set the vScroll of fld "A" to "0"  --top
+set the vScroll of fld "A" to "100000"  --vertical scroll thumb to bottom.
+set the vScroll of fld "A" of cd 7 to "0"  --doesn't work on remote scrolling fld
+----
+on mouseUp  --daylight increasing or decreasing?
+  convert date() to seconds
+  put it into Today
+  convert ("6/21/" &char -2 to -1 of date()) to seconds
+  put it into SumSolstice
+  convert ("12/22/" &char -2 to -1 of date()) to seconds
+  put it into WinSolstice
+  if Today < SumSolstice or Today > WinSolstice then put date() &": daylight increasing"
+  else if Today > SumSolstice and Today < WinSolstice then put date() &": daylight decreasing"
+end mouseUp
+----
+on mouseUp  --trap for division by zero error AFTER calculation
+  try
+    get 2/0
+  catch AnyError  --put AnyError &cr& line (item 1 of AnyError) of the cErrorsList of card 1 of stack "revErrorDisplay"
+    answer "Sorry, you tried to divide by zero." with "OK"
+    exit to top
+  end try
+end mouseUp
+----
+on mouseUp  --days to yr,mo,days
+  get "200"
+  if it >= "365" then put it &&"days = about"&& trunc(it/365) &&"yr," && trunc((it mod 365)/30) &&"mo," && trunc((it mod 365) mod 30) &&"dy"
+  else if it >= "30" then put it &&"days = about"&& trunc((it mod 365)/30) &&"mo," && trunc((it mod 365) mod 30) &&"dy"
+end mouseUp
+----
+on mouseUp  --day of year
+  convert date() to seconds
+  put it into Today
+  convert it to dateItems
+  convert "1/1/" & item one of it to seconds
+  put it into StartYear
+  put date() && "is day" && trunc((Today - StartYear)/86400)+1 &"."
+end mouseUp
+----
+on mouseUp  --xx/xx/xx date format
+   put date() into tDate  --short date
+   set the itemDel to "/"  --for date
+   if number(chars in item 1 of tDate) = "1" then put "0"& item 1 of tDate into item 1 of tDate  --x/x/xx to 0x/0x/xx
+   if number(chars in item 2 of tDate) = "1" then put "0"& item 2 of tDate into item 2 of tDate
+   set the itemDel to ","  --default
+end mouseUp
+----
+on mouseUp  --this week's sun-sat dates:
+   local DayOfWeek, DateCalc, Box1
+   convert date() to dateItems
+   put item -1 of it into DayOfWeek  --sun=1,... sat=7
+   subtract (DayOfWeek - 1) from item 3 of it  --this week's sunday
+   --add (8 - DayOfWeek) to item 3 of it  --next week's sunday
+   repeat 7 -- days
+      put it into DateCalc
+      convert DateCalc to short date
+      put DateCalc &", " after Box1
+      add 1 to item 3 of it
+   end repeat
+   delete char -2 to -1 of Box1  --last comma & space
+   answer "This week's Sunday:" && word 1 of item 1 of Box1 &cr& \
+  "Today is" && item 1 of the long date &":"&& date() &cr& \
+   "This week's Saturday:" &&word 1 of item 7 of Box1 with "OK"
+end mouseUp
+----
+on mouseUp  --600wins out of 845 tries = 71%. X more wins = 80%??
+  put ".1" into X
+  repeat forever
+    if (600+X)/(845+X)>=.80 then exit repeat
+    add .1 to X
+    if optionKey() = "down" then exit repeat  --failsafe
+  end repeat
+  put X &&"more wins = 80%." into msg
+end mouseUp
+----
+on mouseUp  --count matches:
+   get fld 1
+   repeat for each line i in it
+      add 1 to CountArray[i]
+   end repeat
+   combine CountArray by cr  and comma
+   put CountArray into fld 2
+end mouseUp
+----
+--sum second items for exact matching first items:
+local tSummary
+repeat for each line i in fld 1
+    add item 2 of i to tSummary[item 1 of i]
+end repeat
+combine tSummary by cr and comma
+sort tSummary
+put tSummary into fld 2
+----
+on mouseUp  --count occurrences of a number with an array
+  repeat 5000
+    put  random(100) & "," after NumberList  --comma separated random numbers
+  end repeat
+  delete last char of NumberList  --last comma
+  put empty into NumberArray
+  repeat for each item i in NumberList
+    add 1 to NumberArray[i]  --most occurrences = highest number
+  end repeat
+  --put NumberArray[10]  --occurrences of 10
+  combine NumberArray by return and tab  --convert array to text
+  set the itemDel to tab
+  sort NumberArray descending numeric by item 2 of each  --by occurrence (by item 1 of each  --by number)
+  put line 1 to 10 of NumberArray  --top 10 occurrences
+  --put NumberArray into fld "A"
+end mouseUp
+----
+on mouseUp  --count-down timer
+   if the backgroundColor of me = empty then  --start timer
+      set the backgroundcolor of me to green
+      CountDown
+   else  --stop timer
+      cancel item 1 of last line of pendingMessages()  --stop the send loop
+      set the backgroundcolor of me to empty
+      put "15:00" into me
+   end if
+end mouseUp
+
+on CountDown
+   set the numberFormat to "00"
+   set the itemDel to ":"
+   if item 1 of me = "00" and item 2 of me = "00" then  --auto stop
+      beep 2
+      cancel item 1 of last line of pendingMessages()  --stop the send loop
+      set the backgroundcolor of me to empty
+      put "15:00" into me
+      exit to top
+   else if item 2 of me = "00" then
+      subtract 1 from item 1 of me
+      put "59" into item 2 of me
+   else subtract 1 from item 2 of me
+   send "CountDown" to me in 1 sec
+end CountDown
+----
+on mouseUp  --count-up timer
+   if the backgroundColor of me = empty then  --start timer
+      set the backgroundcolor of me to green
+      CountUp
+   else  --stop timer
+      cancel item 1 of last line of pendingMessages()  --stop the send loop
+      set the backgroundcolor of me to empty
+      put "00:00:00" into me
+   end if
+end mouseUp
+
+on CountUp
+   set the numberFormat to "00"
+   set the itemDel to ":"
+   if item 1 of me = "24" then  --auto stop after 24 hrs
+      cancel item 1 of last line of pendingMessages()  --stop the send loop
+      set the backgroundcolor of me to empty
+      put "00:00:00" into me
+      exit to top
+   else if item 2 of me = "59" and item 3 of me = "59" then
+      add 1 to item 1 of me
+      put "00" into item 2 of me
+      put "00" into item 3 of me
+   else if item 3 of me = "59" then
+      add 1 to item 2 of me
+      put "00" into item 3 of me
+   else add 1 to item 3 of me
+   send "CountUp" to me in 1 sec
+end CountUp
+----
+on mouseUp  --complex repeat
+   repeat with j = 1 to 3  --item 1,4,7,31,34,37,61,64,67
+      repeat with i = (item j of "1,31,61") to (item j of "7,37,67") step 3
+         put i &"," after X
+      end repeat
+   end repeat
+   put X
+end mouseUp
+--
+on mouseUp  --repeat negative
+   repeat with i = 1 down to -5
+      put i &"," after X
+   end repeat
+   put X
+end mouseUp
+----
+on mouseUp  --last comma to tab, for insertion into spreadsheet
+   put fld "A" into Box1
+   put empty into Box2
+   repeat with i = 1 to number(lines in Box1)
+      get last item of line i of Box1
+      delete last item of line i of Box1
+      put line i of Box1 &tab& it into line i of Box2  --replace would change all commas to tabs
+   end repeat
+   put Box2 into fld "A"
+end mouseUp
+----
+on mouseUp  --sort ITEMS within a line by first word of each item
+   sort items of fld "A" by word 1 of each
+end mouseUp
+----
+on mouseUp  --sort LINES of a field by first word of each line
+   sort lines of fld "A" by word 1 of each
+end mouseUp
+----
+sort cds ascending dateTime by the short name of this cd  --goes to cd 1
+----
+on mouseDown  --simulate btn hilite in image script
+  set the ink of me to "blend"  --hilite
+end mouseDown
+
+on mouseRelease
+  set the ink of me to "srcCopy"  --default
+end mouseRelease
+
+on mouseUp
+  set the ink of me to "srcCopy"  --default
+  beep  --img code here
+end mouseUp
+----
+Stop execution of a runaway script:
+A) set the allowInterrupts to "true"  --enable ctrl-. or cmd-. to stop runaway script, but must be set BEFORE runaway occurs
+OR B) start > type task manager, hilite LiveCode, end task.
+----
+put item 1 of i &cr after Box1  --after faster than before
+----
+put the rect of btn ID NextBtnID &"," after Box1  --ID faster than name
+----
+repeat for each char <item,line,key> i in Box1  --for each faster than with (MUST use 2nd container for changes made to 1st container).
+repeat with i = 1 to number(chars in Box1)  --2nd container NOT needed.
+----
+repeat with i = 1 to 21 step 2  --odd numbers: i= 1,3,5,7...21
+----
+--filter <container> without EntireLine  --remove lines
+--filter <container> with EntireLine  --keep lines
+--filter items of <container> without EntireItem  --remove items in all lines
+
+filter Box1 without empty  --remove blank lines
+filter Box1 without space  --remove lines that only have one space char
+filter fld "A" without empty  --remove blank lines
+filter fld "A" without "#"  --remove lines that only have one # char, won't remove "##" or "Hello #"
+filter fld "A" with ("*"& tSearchString &"*")  --keep lines, "*" allows match to any chars before or after tSearchString container
+filter fld "A" with ("*"& "Testing" &"*")  --keep lines, "*" allows match to any chars before or after string
+filter fld "A" with ("B" &"*")  --keep all lines beginning with "B" or "b", delete all others. (set the caseSensitive to "true" --for lines beginning with "B")
+filter items of fld "A" without "3"  --remove items on all lines that have one "3" char, won't remove third item from "1, 2, 3, 4" or "10,20,30,40"
+--filter cmd removes color assigned to text with the textColor property.
+----
+Script editor of selected object: ctrl-e
+Stack script editor: ctrl-shift-s
+Card script editor: ctrl-shift-c
+----
+No new cd, delete cd, or msg box in player or standalone. Make extra new cds before converting if necessary. Make substack palette for msg box substitute. You can't save changes in a standalone. You need to save your data in a file outside your standalone. This file can be .txt or a stack. Save such files to the preferences folder, application data folder, documents folder, or sometimes the home folder or application support folder.  Custom property contents persist after a stack is quit except in a player or standalone.
+----
+--Cross-platform way to save preferences in a standalone?
+If it's plain text data use a text file. If it's binary use a stack and set custom properties in the stack to hold the data. Write the file (text or stack) to specialFolderPath("preferences") for computer, or specialFolderPath("documents")  for mobile, or in some cases to the app support folder, depending on usage and OS. When the standalone application opens, open the prefs file invisibly and read the data you need to retrieve.
+----
+You cannot save data inside of a standalone, you need to save them somewhere in an external file! Use a simple TAB delimited textfile.
+Another common practice is to use a "splash screen", a stack which does little except to act as the executable, and then have another stack file as your working stack. The splash often simply displays an introductory window, and then passes on to the main stack, or it can be hidden completely. The other stack files are attached in the standalone preferences dialog. The executable cannot be saved to. All the others can be.
+----
+Include a substack named "Data Grid Templates Decoy" (exact spelling) as part of the Splash stack if your working stack includes a datagrid. This will force the auto inclusions routine to include the datagrid library in the standalone build. LC v8+ now includes the datagrid library in the manual inclusions option also.
+----
+Completely remove stack from memory when it's closed: set the destroyStack of this stack to "true"  --or file > close stack and remove from memory  --or object > stack inspector, check purge stack on close  --or edit > preferences > files & memory, check destroyStack property set to true for new stacks.
+----
+ask, ask file, answer file: if it = empty then exit to top
+answer: if it = "Cancel" then exit to top
+----
+send in time  --finishes current handler before starting new handler.
+----
+ if "button" is in target() then put "This is a button."  --identify btn
+ else if "field" is in target() then put "This is a field."   --identify fld
+----
+get "2.15"
+put round(it +.5) into msg  --always round up to next whole number (returns 3)
+----
+on mouseUp
+  try  --trap for divide by zero error
+    get 8/0
+  catch AnyError
+    answer "Sorry, you divided by zero." with "OK"
+    exit to top
+  end try
+end mouseUp
+----
+on mouseMove x,y  --drag an object
+   if x,y is within the rect of this cd then 
+      if gDragging = "true" then
+         -- your script
+      end if
+   end if
+end mouseMove 
+----
+clickChar()  --returns char "p"
+clickText()  --returns word "Sleep"
+clickCharChunk()  --returns char "char 35 to 35 of field 3"
+clickChunk()  --returns word "char 31 to 39 of field 3"
+if clickText() contains "*" then  --for hypertext
+----
+put number(lines in keys(Array1)) into msg  --size of array
+----
+--assemble items list before using:
+get "1,2,3,4,5,6,7,8,9,10," & \
+         "11,12,13,14,15,16,17,18,19,20," & \
+         "21,22,23,24,25,26,27,28,29,30"
+put it
+----
+on enterKey  --in cd script, simulate default btn behavior for substack dialog
+  if selection() = empty then returnKey
+  else pass enterKey
+end enterKey
+
+on returnKey
+  if selection() = empty and the default of btn "OK" then send "mouseUp" to btn "OK"
+  else pass returnKey
+end returnKey
+----
+put fld "A" into url ("file:SavedData.txt")  --all-English text
+get url ("file:" &FilePath)  --text file into it
+put NewText into url ("file:" &FilePath)  --replace
+put NewText into line 9 to -1 of url ("file:" &FilePath)
+put cr& NewText after url ("file:" &FilePath)  --add after
+put NewText &cr before url ("file:" &FilePath)  --add before
+----
+--make a bg fld or bg btn: (same fld or btn autocreated on every new cd)
+1) D-click fld, enter name, uncheck "shared text" for different fld text/cd or uncheck "Shared hilite" for different btn hilite/cd (checkbox or radio).
+2) Group: select fld or btn, object > group selection.
+3) Transform group to bg fld or bg btn: on group object inspector check "behave as a background."
+----
+set the sharedHilite of btn "Checkbox A" to "false"  --different for each card
+set the sharedText of fld "Field A" to "false"  --different for each card
+----
+send "mouseUp" to btn "Next" in 0 millisecs  --finish current handler first.
+send "mouseUp" to btn "Next"  --finish new handler first, then come back.
+----
+copy btn 1 to grp 1  --add btn to existing group
+copy btn 1 of grp 1 to this cd  --copy of btn 1, but it will NOT be in group 1.
+clone btn 1 of grp 1  --copy of btn 1, and it WILL be in group 1.
+----
+copy this cd to stack "Test Stack"  --card of one stack copied/pasted after last card of another stack.
+----
+function stripDuplicateLines OriginalText  --delete duplicate lines
+   repeat for each line i in OriginalText
+      add 0 to MyArray[i]
+   end repeat
+   return keys(MyArray)
+end stripDuplicateLines
+
+function frequencyOfLines OriginalText  --return lines sorted by frequency
+   local MyArray, SortedText
+   repeat for each line i in OriginalText
+      add 1 to MyArray[i]
+   end repeat
+   repeat for each line j in keys(MyArray)
+      put cr& MyArray[j] &comma& j after SortedText
+   end repeat
+   delete char 1 of SortedText
+   sort SortedText descending numeric by item 1 of each  --frequency
+   return SortedText
+end frequencyOfLines
+----
+--rotate polygons: set the startAngle property.
+--rotate images: set the angle property.
+set the angle of image "Top" to the angle of image "Top" + 1  --rotate image
+----
+on mouseUp  --rotate a polygon without dimension change
+   set the points of grc id 2625 to the effective points of grc id 2625
+   set the opaque of grc id 2625 to "true"
+   set the style of grc id 2625 to "polygon"
+   revRotatePoly the long name of grc id 2625, 45  --clockwise
+end mouseUp
+----
+on arrowKey X  --multi arrowKey action
+  if target() contains "field" then pass arrowkey
+  else beep  --or do other arrowKey stuff
+end arrowkey
+----
+on SortBins  --randomize two containers with exact data where last line Bin1 <> first line Bin2:
+  sort lines of fld "Bin1" by random(10000)
+  sort lines of fld "Bin2" by random(10000)
+  if line -1 of fld "Bin1" = line 1 of fld "Bin2" then SortBins
+end SortBins
+----
+lock moves  --like lockScreen set to "true"
+move btn 1 to 300,200 in 2 secs
+move fld 2 to 0,0 in 2 secs  --nothing moves yet
+unlock moves  --now both objects move together
+----
+lock moves  --move multiple objects at once
+move btn 1 from 454,153 to 454,205 in 2 secs without waiting
+move btn 2 from 454,205 to 554,205 in 2 secs without waiting
+move btn 3 from 554,205 to 654,205 in 2 secs without waiting
+move btn 4 from 654,205 to 750,205 in 2 secs without waiting
+unlock moves  --all objects move together
+----
+on dragstart  --script in image to allow drag to desktop
+  set the dragAction to "copy"
+  put specialfolderpath("temporary") & "/DragImage.jpg" into tTempImage
+  put the text of img 1 into url ("binfile:" & tTempImage)
+  set the dragdata["files"] to tTempImage
+end dragstart
+----
+--open image file from disk and display in selected image object:
+  answer file "Select image:"
+  if it = empty then exit to top
+  put url ("binfile:"&it) into selObj()  --selected object
+----
+--delete files in a folder:
+put the folder into OldDir 
+put specialfolderpath("cache") & "/" into tCacheFolder
+set the directory to tCacheFolder
+put the files into tFiles  --files list
+set the directory to OldDir  --reset back
+filter tFiles with "*.dat"  --only .dat files
+if tFiles = empty then exit to top  --or current handler
+repeat for each line i in tFiles
+   delete file (tCacheFolder & i)
+end repeat
+----
+put max(10,min(100,MyValue))  --10 to 100 range
+put min(100,max(10,MyValue))  --10 to 100 range
+if it >= "10" and it <= "100" then put it  --10 to 100 range
+if it is in "123456789" then put it  --1 to 9 range
+if it is among the items of "10,11,12,13,14,15" then put it  --10 to 15 range
+----
+on mouseUp  --identify specific word in list
+  get "green"
+  set the wholeMatches to "true"
+  if (it is among the lines of fld "WordList") then beep
+end mouseUp
+----
+on mouseDown X  --popup menu on right-click
+  if X = "3" then popup btn "ContextualMenu"
+  else pass mouseDown
+end mouseDown
+----
+on mouseEnter  --change cursor over btn
+   set the cursor to hand
+   lock cursor
+end mouseEnter
+
+on mouseLeave
+   unlock cursor
+end mouseLeave
+----
+on mouseMove x,y -- hilite linked text
+  if mouseChunk() is not empty and \
+         "link" is among the items of the textStyle of mouseChunk() then set the backgroundColor of mouseChunk() to "yellow"  --or show img "Photo2"
+end mouseMove
+----
+on mouseMove x,y  --trigger action hovering over word in fld
+  if mouseChunk() is not empty and \
+  "bold" is among the items of the textStyle of mouseChunk() then show img "Photo2"
+  else hide img "Photo2"
+end mouseMove
+----
+set the backgroundColor of char -3 to -1 of line 1 of fld "Legend" to "red"  --or "green", "lightyellow", or empty.
+--Setting the backgroundColor or textColor of a field with a chunk expression overrides the field's backgroundColor or textColor until the chunk is set to empty returning it to the default color, or the text is replaced with new text returning it to the default color,
+or:
+put the text of fld "A" into fld "A"  --reset to owner default
+or:
+set the backgroundColor of word 1 to -1 of fld "A" to empty
+set the textFont of word 1 to -1 of fld "A" to empty
+set the textColor of word 1 to -1 of fld "A" to empty
+----
+--substack palette: file > new substack
+palette stack "Messages"  --open substack as palette, can't edit
+topLevel stack "Messages"  --open substack to edit
+delete stack "Messages"  --delete from msg box
+open stack "Messages"  --or close
+put "This is a message." into fld "Display" of stack "Messages"
+put the substacks of this stack into msg  --line list of substacks
+if "Messages" is among the lines of openStacks() then beep  --palette open
+--trap for preOpenStack, openStack, closeStack messages in substack's stack script.
+----
+--transfer a COPY of a substack from one main stack to another main stack:
+--copy stack "Messages" to stack "Recipient"  --does NOT work.
+--(stack "Messages" is the substack in main stack "Donor".)
+open stack "Recipient"  --open recipient main stack.
+open stack "Donor"  --open donor main stack containing substack.
+clone this stack  --make a copy of "Donor" stack, use the copy.
+set the mainStack of stack "Messages" to "Recipient"  --transfer substack
+delete stack "Copy of Donor"  --delete the main stack copy.
+put the substacks of this stack into msg  --donor and recipient stacks contain the substack "Messages".
+----
+substacks cannot have substacks.
+----
+--change behavior of cd, btn, fld:
+set the behavior of this card to the long id of btn "Widget" of cd "Behaviors" of stack "BehaviorsHome"
+put the behavior of this cd into msg  --verify the change
+----
+on mouseUp  --organize list in array, deconstruct to put in fld:
+   put "exe,rar,html,htm,bin,zip,pdf,mp3,jpg,wmv,avi,tif" into tExtension
+   repeat with i = 1 to the number of items of tExtension
+      put item i of tExtension into MyArray[i]
+   end repeat
+   set the itemDel to "-"
+   combine MyArray with return and "-"
+   sort MyArray numeric by item 1 of each
+   put MyArray into  fld "Display"
+end mouseUp
+----
+repeat for each line i in MyDataA  --array to subtotal a list
+  add item 2 of i to MyDataB[item 1 of i]
+end repeat
+----
+set the imageSource of char 1 of fld "XYZ" to "ImageName/ID"  --assign bitmap image to char in fld
+set the imageSource of char 1 of fld "A" to "237892"  --or empty. Take snapshot of vector graphic and use resulting bitmap image as imageSource
+put img "ImageName/ID" of cd 1 of stack "Substack1" into img "Display"  --image in an image object dragged from object palette to cd.
+----
+on CheckIfExists  --if file contains specific data:
+  put url ("file:" & specialFolderPath("Documents") & "/Flights.txt") into tFlightData  --all-English text
+  if tFlightData contains "1517" and tFlightData contains "UNKNOWN" then answer "Both data exists." with "OK"
+  else answer "Sorry, both data do not exist." with "OK"
+end CheckIfExists
+----
+if "quit" is among the words of it then beep  --won't hit on "quite"
+if "quit" is in it then beep  --WILL hit on "quite"
+if it contains "quit" then beep  --WILL hit on "quite"
+----
+on mouseUp  --rotate text
+   lock screen
+   repeat number(imgs of this cd)  --clear old images
+      delete last img of this cd
+   end repeat
+   put the rect of fld 1 into tRect
+   add 2 to item 1 of tRect
+   add 2 to item 2 of tRect
+   add -2 to item 3 of tRect
+   add -2 to item 4 of tRect
+   put the loc of this cd into tLoc
+   subtract (height of this stack - top of fld 1)/2 from item 2 of tLoc
+   add (bottom of fld 2/2)-margins of fld 2 to item 2 of tLoc
+   select empty
+   export snapshot from rect tRect of fld 1 to TextCapture as PNG
+   reset the templateImage
+   set the text of the templateImage to TextCapture
+   set the showBorder of the templateImage to "false"
+   set the resizeQuality of the templateImage to "best"
+   create img
+   reset the templateImage
+   set the loc of img 1 to tLoc
+   unlock screen
+   set the angle of last img of this cd to 90  --rotate counterclockwise 90
+   --set the angle of last img of this cd to 270  --rotate clockwise 90
+   --flip img 1 horizontal  --backwards
+   --flip img 1 vertical  --upside down
+end mouseUp
+----
+on mouseUp  --create image from existing file
+  answer file "Open an image file..."
+  if it = empty then exit to top
+  put it into tPathFile
+  create image "LiveCodeBar.png" in grp "CCTVObject"
+  set the filename of image "LiveCodeBar.png" to tPathFile
+end mouseUp
+----
+--reference imported snapshot
+import snapshot from rect TheRect of window TheID
+set the short name of last image to "new name of screenshot"
+----
+export snapshot from fld 1 to TextCapture as PNG  --snapshot to container
+reset the templateImage
+set the text of the templateImage to TextCapture
+set the showBorder of the templateImage to "false"
+set the resizeQuality of the templateImage to "best"
+lock screen
+create img
+reset the templateImage
+set the loc of img 1 to tLoc
+set the angle of last img of this cd to 270  --rotate 0-360 counterclockwise
+unlock screen
+----
+upArrow cycles through msg box cmd line history, no script access.
+rightArrow completes autofill.
+multiple cmds in msg box: separate commands with semicolon (;).
+----
+delete last char of it  --last comma or return from repeat loop
+----
+put (optionKey() = "down") into Var  --true/false
+----
+if there is a stack "OldHCStack" then go to stack "OldHCStack"  --open HC stack "C:/Users/Terry/Documents/LiveCode/OldHCStack"
+----
+Turn off cd numbers in title bar: add a label to stack in stack inspector.
+----
+convert "9:30 AM" to dateItems  --time math
+add "45" to item 5 of it  --minutes
+convert it to short time  --10:15 AM
+----
+60*60*24  --86400, seconds in a day
+----
+on menuPick X  --pull-down menu
+   switch X
+      case "A"
+         put fld 2 / 20 into fld 3
+         break
+      case "B"
+         put fld 2 / 40 into fld 3
+         break
+      case "C"
+        put fld 2 / 60 into fld 3
+         break
+   end switch
+end menuPick
+----
+* Make current cd NOT have bg group controls: select a group control, object > remove group.
+* Make current cd HAVE bg group controls: object > place group.
+* Add new control to a bg group: select a group control, object > edit group, add new control, object > stop editing group. Group ID # and name remain unchanged, new control appears on all cds original group appeared on.
+* Edit script of a group control: edit the script of btn "Left"  --into msg
+----
+on keyDown X  --allow only <= five chars, chars alpha-numeric, no spaces
+  if X is in "0123456789abcdefghijklmnopqrstuvwxyz" and length(me) <= "5" then pass keyDown
+end keyDown
+----
+on DeleteMarkedCds  --delete marked cds in a stack
+   unmark all cds
+   mark cds where fld "A" >= "3" or fld "A" = empty  --conditional mark
+   unmark cds where fld "A" = "4"  --optional conditional unmark
+   sort cds by not the mark of this card  --marked cds to front of stack
+   lock screen
+   go cd 1
+   get number(marked cds)
+   repeat it
+      delete this cd
+   end repeat
+end DeleteMarkedCds
+----
+create cd  --new cd after current cd, goes to it.
+delete this cd  --current cd deleted, goes to next cd. (If last cd deleted, goes to 1st cd). Must delete the current cd one at a time or in a repeat loop. (Can't delete cd 3, can't delete last cd). If all cds of a stack are deleted, one blank empty cd is created.
+----
+mark cds where fld "A" >= "3"  --marked cds can be used with print, sort, show, go, but NOT delete.
+delete marked cds  --does NOT work
+if the mark of this cd then delete this cd  --works
+mark this cd
+mark all cds
+unmark all cds
+----
+sort marked cds by the short name of this card  --only marked cds sorted
+sort cds by not the mark of this card  --marked cds to front of stack
+----
+push cd  --remember this cd
+lock screen
+sort cds descending numeric by the short id of this card  --or ascending
+pop cd  --back to pushed cd
+----
+REPOSITION A SINGLE CARD: in msg box (ctrl-m)
+set the number of this cd to "1"  --at cd to reposition, ABCD > DABC
+
+REPOSITION ALL CARDS: in msg box
+sort cds descending by fld "NewOrder"  --ABCD > DCBA
+sort cds ascending by fld "NewOrder"  --DCBA > ABCD
+sort cds descending by the short name of this cd  --ABCD > DCBA
+sort cds numeric by the ID of this cd  --ABCD > BDCA
+sort cds numeric by random(number(cds))  --ABCD > random
+sort cds numeric by random(1000)  --ABCD > random
+
+REPOSITION A SUBSET OF CARDS: in msg box
+1) unmark all cds  --reset
+2) mark this cd  --at cds to mark as a subset
+3) sort cds by not the mark of this cd  --marked cds to front of stack
+4) unmark all cds  --ABCDEFG > EFGABCD
+
+REPOSITION WITHIN A SUBSET OF CARDS: in msg box
+1) unmark all cds  --reset
+2) mark this cd  --at cds to mark as a subset
+3) sort marked cds by the short name of this cd  --only marked cds sorted
+4) unmark all cds  --ABCDEFG > EFGABCD
+----
+if the number of lines in fld "A" >= "10" then beep  --works
+if number(lines in fld "A") > "10" then beep  --error (bug?)
+if (number(lines in fld "A")) > "10" then beep  --error
+get number(lines in fld "A"); if it > "10" then beep  --error in single mode
+if value(number(lines in fld "A")) > "10" then beep  --works
+put number(lines in fld "A")  --works
+----
+repeat with i = 1 to number(chars in X)
+repeat with i = 1 to length(X)  --equivalent
+----
+convert date() to seconds  --to compare dates
+convert date() to dateItems  --yr,mo,dy,hr,mi,sc,dow
+----
+on mouseUp  --recording revSpeak requires QuickTime
+  answer record  --load QuickTime, display settings dialog
+   set the recordInput to "imic"  --internal mic
+   set the recordRate to 48  --44.1 is CD quality
+   if platform() = "win32" then
+      set the recordFormat to "wave"
+      put ".wav" into Suffix
+   else
+      set the recordFormat to "aiff"
+      put ".aif" into Suffix
+   end if
+   record sound file (specialfolderpath("Desktop") & "/AudioText1" & Suffix)
+   revSpeak fld "AudioText"
+end mouseUp
+
+on mouseUp  --stop btn
+  revStopSpeech
+  wait 10 ticks  --blocking
+  stop recording
+end mouseUp
+----
+on mouseUp  --recording sound requires QuickTime
+   answer record  --load QuickTime, display settings dialog
+   --put specialfolderpath("Desktop") & "/Recording01.wav" into FileX
+   put fld "fPath" &".wav" into FileX
+   record sound file FileX
+end mouseUp
+----
+on mouseUp  --play sound outside LiveCode
+   answer file "Select an audio file to play..."
+   if it = empty then exit to top
+   play it
+end mouseUp
+----
+on mouseUp  --play sound imported into LiveCode
+   play audioclip 1
+end mouseUp
+----
+value(foundLine())  --text of line y of fld z
+value(foundChunk())  --text of char x to char y of fld z
+----
+on mouseUp  --self-deleting btn or fld script
+   answer "Delete this button?" with "Cancel" or "OK"
+   if it = "Cancel" then exit to top
+  send "DeleteMe (the long name of me)" to this stack in 0 millisecs
+  --essential: send in time finishes current handler before sending
+end mouseUp
+
+on DeleteMe X  --stack script
+  delete X
+end DeleteMe
+----
+on mouseUp  --self-deleting group btn or group fld script
+  answer "Delete this button and its group?" with "Cancel" or "OK"
+  if it = "Cancel" then exit to top
+  send "DeleteGroup (the long name of the parent of me)" to this cd in 0 millisecs  --finish current handler
+--essential: send in time finishes current handler before sending
+end mouseUp
+
+on DeleteGroup X  --cd script
+ delete grp X
+end DeleteGroup
+----
+put the text of btn "Help" into tMenu  --remove menuItem from menu
+filter tMenu without ("Buy a License" & "*")
+set the text of btn "Help" to tMenu
+put "New MenuItem" into line 2 of btn "XYZ"
+put "Another New MenuItem" after last line of btn "XYZ"
+put number(lines in btn "XYZ") into tMenuLines
+----
+Menu line: (-  --hyphen on menuItem line, no lines in combo or option btns.
+----
+ if line 1 of me = "Edit" then put "!cEdit" into line 1 of me  --check on, action in effect
+ else put "Edit" into line 1 of me  --check off a menuItem
+----
+Use double-slash "//"  or double-ampersand "&&" for proper display of / and & in a menuItem.
+----
+--Menu Messages: mouseDown, menuPick
+--Menu Properties: style, menuMode, text, label, menuHistory
+--Set menu properties in a button's Properties Inspector, or use set cmd:
+set the menuMode of btn 1 to "option"  --option, combo box, pop up, pull down, cascade, tabbed
+
+Option  --only choices offered, choice displayed.
+Combo Box  --only choices offered or type in choice, choice displayed.
+Pop Up  --for right-click contextual menu.
+Pull Down  --standard for an action.
+Cascade  --hierarchial menu.
+Tabbed  --tab panel.
+----
+set the text of btn 1 to "Red" &return& "Blue &return& "Green"  --or:
+put "Purple" into line 3 of btn 1  --replaces green as third menuItem.
+----
+Menu Metacharacters  --only for pull down and pop up menus!
+disable a metacharacter: \  --put first
+disable menuItem: (
+divider lines: (-  --separate several menuItems
+cascade menuItem: tab char  --returns menuItem|cascadeMenuItem
+checkmark: !c  --checkmark in front of menuItem indicating active/on.
+diamond: !r
+----
+set the itemDel to "|"
+if item 1 of X = "More Choices" then
+  if item 2 of X = "Option1" then beep  --action for cascade menuItem 1.
+end if
+----
+if char 1 to 2 of line 3 of me = "!c" then delete char 1 to 2 of line 3 of me
+else put "!c" before line 3 of me  --toggle checkmark for menuItem
+----
+on menuPick ThisPick  --alternative switch-case-break control structure
+   switch ThisPick  --for menu buttons
+      case "Choice 1"
+         answer "You chose the First option, Choice 1." with "OK"
+         -- do more stuff here for first menuItem
+         break
+      case "Choice 2"
+         answer "You chose the Second option, Choice 2." with "OK"
+         -- do more stuff here for second menuItem
+         break
+      case "Choice 3"
+         answer "You chose Choice 3, the Third option." with "OK"
+         -- do stuff here for third menuItem
+         break
+   end switch
+end menuPick
+
+on closeField  --test user input with combo box menu
+   get the label of me
+   if last word of it is an integer and last word of it is among the words of "4 5 6 7 8 9 10" then
+      set the label of me to "Choice" && last word of it
+      answer "You chose" && the label of me &", an option that you entered." with "OK"
+   else  --default
+      set the label of me to "Choice 4"
+      answer "Sorry, your entry must be" &&quote& "Choice " &quote&& "and a number between 4 and 10." with "OK"
+   end if
+end closeField
+----
+revSetSpeechVoice "Microsoft Anna - English (United States)"  --must use full name, not "Anna" or "Microsoft Anna"
+----
+on mouseUp  --change item in list
+   repeat with i = 1 to number(lines in fld "A")
+      put "s" into item 1 of line i of fld "A"
+   end repeat
+end mouseUp
+----
+on mouseUp  --remove empty lines
+   get fld "A"
+   filter it without empty  --remove blank lines
+   put it into fld "A"
+end mouseUp
+----
+on mouseUp  --actual odds
+   answer "Calculate the actual result of chance odds." with "Cancel" or "1 in 5" or "1 in 4" or "1 in 3" or "1 in 2"
+   if it = "Cancel" then exit to top
+   local Box1,Box2,Box3,Box4,Box5
+   repeat 500
+      do "add 1 to Box" &random(word-1 of it)
+   end repeat
+   answer "The math result for a" && it && "chance, 500 trials =" && round(500/word -1 of it) &cr& \
+   "The actual result for a" && it && "chance, 500 trials =" &cr& "Red=" &&Box1 &cr& \
+   "Blue=" &&Box2 &cr& "Yellow=" &&Box3 &cr& "Green=" &&Box4 &cr& "Black=" &&Box5 with "OK"
+end mouseUp
+----
+on mouseUp  --pos integer reduced to prime factors, requires factors() function
+  repeat forever
+    ask "Enter an integer for its factors." with "125"
+    if it = empty then exit to top
+    if it is an integer and it > "1" then exit repeat
+  end repeat
+  answer "The factors of" && it && "are:" && factors(it,"")
+end mouseUp
+
+function factors X,Y  --uses recursion, where a function calls itself
+  put empty into Z
+  repeat with i = 2 to round(sqrt(X))
+    if X mod i = "0" then  --no remainder
+      put factors((X div i),(i & " * " & Y)) into Z  --build factors
+      exit repeat
+    end if
+  end repeat
+  if Z = empty then  --prime
+    put (X & " * " & Y) into Z
+    delete char -2 to -1 of Z
+  end if
+  return Z
+end factors
+----
+on mouseUp  --reorder items in a line list
+  put fld "A" into X  --original list
+  put empty into Y
+  repeat for each line i in X  --requires second container
+    put item 2 of i &","& item 1 of i &","& item 3 of i &cr after Y
+  end repeat
+  delete last char of Y  --last return
+  put cr& Y after fld "A"  --reordered list
+end mouseUp
+----
+on mouseUp  --factorial
+   ask "Factorial what positive integer?" with "5"
+   if it = empty or it is not an integer or it <"0" then exit to top
+   answer it &"! (factorial) =" && fact(it)
+end mouseUp
+
+function fact X
+   get X
+   if it = "0" or it = "1" then return "1"  --by definition
+   repeat with i = 1 to X-1
+      get it * (X-i)
+   end repeat
+   if length(it) >= "8" then return char 1 of it &"."& char 2 to 4 of it &"*10^" &length(it)-1  --scientific notation
+   else return it
+end fact
+----
+on mouseUp  --decimal to nearest 1/16 fraction  --requires DecToFrac() function
+   ask "Enter a decimal to convert to nearest 1/16th fraction." with "2.625"
+   if it = empty or it is not a number then exit to top
+   answer quote& it &quote&& "converts to" && DecToFrac(it) &&"inches." with "OK"
+end mouseUp
+----
+on mouseUp  --stairs dimensions (requires DecToFrac() custom function)
+   repeat forever
+      ask "Please enter Vertical Drop for stairs in inches (decimal or fraction)." with "40 3/8"
+      if it = empty then exit to top
+      if last char of it = "quote" then delete last char of it  --remove inch symbol
+      if "/" is in it then do "get" &&word 1 of it&& "+" &&word 2 of it  --convert fraction to decimal
+      if it is a number and it >"0" then exit repeat
+   end repeat
+   put it into VertDrop
+   put DecToFrac(VertDrop) into VertDropFrac
+   put trunc((VertDrop/7)+1) into Steps  --integer+1
+   set the numberFormat to "0.00"
+   put VertDrop/Steps into Rise  --height of each step
+   put DecToFrac(Rise) into RiseFrac
+   put "11.25" into Run  --width of each step
+   put "11 1/4" into RunFrac
+   put Run*(Steps-1) into Span  --horizontal length of stairs
+   put DecToFrac(Span) into SpanFrac
+   set the numberFormat to "0"  --integer
+   answer "Vertical Drop:" &&VertDropFrac&quote &cr& \
+   "Steps:" &&Steps*1 &"  " &cr& \
+   "Rise:" &&RiseFrac&quote &cr& \
+   "Run:" &&RunFrac&quote &cr& \
+   "Span:" &&SpanFrac&quote &cr& \
+   "Cut Tread Height Off Footpad: 1 1/2"&quote &cr& \  --tread thickness compensation
+   "(3) 2x10 Stringers, (" &Steps*2& ") 2x6 Treads" with "OK" titled "Stairs Dimensions"
+end mouseUp
+----
+function DecToFrac X  --decimal to nearest 1/16th fraction
+   put X-trunc(X) into Y  --decimal part
+   put trunc(X) into X  --integer part
+   if X = "0" then put empty into X  --no integer part
+   put "0,.0625,.125,.1875,.25,.3125,.375,.4375,.5,.5625,.625,.6875,.75,.8125,.875,.9375,1.0" into Dec
+   put "0,1/16,1/8,3/16,1/4,5/16,3/8,7/16,1/2,9/16,5/8,11/16,3/4,13/16,7/8,15/16,1" into Frac
+   repeat with i = 1 to 17
+      if Y = item i of Dec then return X && item i of Frac  --exact match
+      else if Y < item i of Dec then
+         if Y-(item i-1 of Dec) < (item i of Dec)-Y then return X && item i-1 of Frac  --closer to lower
+         else return X && item i of Frac  --closer to higher, mid rounds up
+      end if
+   end repeat
+end DecToFrac
+----
+on mouseUp  --save to .txt file on desktop, allows multiple files
+   put fld "A" into tText
+   put "1" into tFileCount
+   repeat while there is a file (specialfolderpath("desktop") & "/Test" &tFileCount& ".txt")
+      add 1 to tFileCount
+   end repeat
+   put (specialfolderpath("desktop") & "/Test" &tFileCount& ".txt") into tFilePath
+   put textEncode(tText,"utf8") into tEncoded
+   put tEncoded into url ("binfile:" &tFilePath)  --export any text
+   if the result <> empty then answer "Sorry, there was a problem writing to a text file." with "OK" titled "Error"
+   else answer "Successfully exported" &&quote& "Test" &tFileCount& ".txt" &quote&& "to the desktop." with "OK"
+end mouseUp
+----
+on mouseUp  --save to .txt file, with save as dialog
+  put fld "A" into tText
+  ask file "Please save the text file as..." with type "Text Files|txt|"
+  if it = empty then exit to top
+  if char -4 to -1 of it <> ".txt" then put it &".txt" into tFilePath  --add .txt
+  else put it into tFilePath  --user included filetype
+  put textEncode(tText,"utf8") into tEncoded
+  put tEncoded into url ("binfile:" &tFilePath)  --export any text
+end mouseUp
+----
+clone this stack  --"Copy of" && <stackname>
+--save backup copy of stack from msg box, ctrl-s for save dialog.
+--both stacks visible in IDE making it easier to work with.
+--name property automatically updated in stack properties inspector.
+----
+on mouseUp  --save backup copy of stack
+   lock screen
+   put "Copy of" && the short name of this stack into TheFileName
+   put char 2 to -2 of word 2 of the long name of this stack into TheFilePath  --no quotes
+   set the itemDel to "/"
+   put "Copy of " before item -1 of TheFilePath
+   save this stack
+   clone this stack  --make backup copy
+   set the destroyStack of stack TheFileName to "true"  --remove from memory when closed
+   save stack TheFileName as TheFilePath
+   close stack TheFileName
+   answer quote& TheFileName &quote&& "was successfully saved to the same folder." with "OK"
+end mouseUp
+----
+on mouseUp  --convert Fahrenheit <-> Celsius
+  repeat forever
+    ask "Enter a temperature to convert between Fahrenheit & Celsius." with "212"
+    if it = empty then exit to top
+    if it is a number then exit repeat
+  end repeat
+  put round(it,1) into Temperature
+  answer "Convert" &&Temperature&& "degrees to..." with "Cancel" or "Fahrenheit" or "Celsius"
+  if it = "Cancel" then exit to top
+  if it = "Celsius" then
+    get round((Temperature-32)/1.8,1)
+    answer Temperature &&"degrees Fahrenheit =" &&it&& "degrees Celsius." with "OK"
+  else  --Fahrenheit
+    get round((Temperature*1.8)+32,1)
+    answer Temperature &&"degrees Celsius =" &&it&& "degrees Fahrenheit." with "OK"
+  end if
+end mouseUp
+----
+on mouseUp  --one char/line
+  get fld "A"
+  put empty into X
+  repeat with i = 1 to number(chars in it)
+    put char i of it &return after X
+  end repeat
+  delete last char of X  --last return
+  put X into fld "A"
+end mouseUp
+----
+on mouseUp  --sort fld "A"
+  sort items of fld "A"
+  --sort items of fld "A" by word 2 of each
+  --sort lines of fld "A"  --a-z
+  --sort lines of fld "A" descending numeric by item 1 of each
+  --sort lines of fld "A" descending numeric by the length of each  --sort by number of chars in each line
+end mouseUp
+----
+on mouseUp  --set of containers with similar names
+  repeat with i = 1 to 5
+    do "put" && 10*i && "into" &&Holder&i
+  end repeat
+  put Holder5 &&"is in Holder5."  --50
+end mouseUp
+----
+--put random(100) * item random(2) of "-.01,.01"  --+/- between 0 and 1
+--put random(3)-2  --1,0,-1
+--sort items of ItemList by random(10000)  --randomize using sort: assigns random number to each item, sorts numbers. Use for chars, items, lines.
+--random(max-min+1)+min-1  --5 to 20 = random(20-5+1)+5-1 = random(16)+4
+----
+--msg box tricks:
+on mouseUp  --resize msg box
+  put "The msg box has been resized." into msg  --first show msg box
+  set the rect of stack "Message Box" to "452,108,853,286"  --resize msg
+  --put the rect of me  --in msg, get msg dimensions
+end mouseUp
+
+on mouseUp  --msg box does NOT work in player or standalone
+  put empty into msg  --show msg, clear display lines
+  put empty into fld 3 of stack "Message Box"  --clear msg cmd line
+end mouseUp
+
+--script access to msg box command line:
+put empty into msg  --clear, show msg
+put "find" &&quote& "Yellow" &quote&& "in fld" &&quote& "A" &quote into fld 3 of stack "Message Box"
+do fld 3 of stack "Message Box"  --execute cmd
+
+--no blindTyping, treat like a container
+set the visible of stack "Message Box" to not the visible of stack "Message Box"
+set the loc of stack "Message Box" to "500,500"
+show msg
+hide msg
+put empty into msg  --show msg, clear display lines
+put "Hello"  --show msg with "Hello" into display line 1 deleting all other display lines
+put "Hello" into line 2 of msg  --"Hello" into 2nd display line preserving all other display lines
+put space& "Hello" after line 2 of msg  --" Hello" after text in 2nd display line
+put space& "Hello" after msg  --" Hello" after last display line
+put line 1 of msg into line 2 of msg
+get msg  --all display lines into it
+get line 2 of msg  --2nd display line into it
+----
+on mouseUp  --create addition table +
+  put empty into X
+  repeat with i = 1 to 12
+    repeat with j = 1 to 12
+      put i &&"+"&& j &&","&& i+j &cr after X
+    end repeat
+  end repeat
+  delete last char of X  --return
+  put X into fld "A"
+end mouseUp
+----
+on mouseUp  --create multiplication table x
+  put empty into X
+  repeat with i = 1 to 12
+    repeat with j = 1 to 12
+      put i &&"x"&& j &&","&& i*j &cr after X
+    end repeat
+  end repeat
+  delete last char of X  --return
+  put X into fld "A"
+end mouseUp
+----
+on mouseUp
+  beep 5  --5 beeps
+end mouseUp
+----
+on preopenStack  --open stack to specific card other than cd 1
+  go cd 3  --or... last cd, any cd, cd id 2247
+  pass preopenStack
+end preopenStack
+----
+--in fld script, auto-resize text in a field set to noWrap
+local sMinTextSize = 8, sDesiredTextSize = 30
+on rawKeyUp
+   repeat while the formattedWidth of me >= the width of me -(item 1 of the margins of me * 2)
+      set the textSize of me to min (max ((the effective textSize of me - 1), sMinTextSize),sDesiredTextSize)
+      if the textSize of me = sMinTextSize then exit repeat
+   end repeat
+   repeat while the formattedWidth of me < the width of me - (item 1 of the margins of me * 2)
+      set the textSize of me to min (max ((the effective textSize of me + 1), sMinTextSize),sDesiredTextSize)
+      if the textSize of me = sDesiredTextSize then exit repeat
+   end repeat
+   pass rawKeyUp
+end rawKeyUp
+----
+on mouseUp  --insert comma delimeter
+  local Box1, Box2
+  put fld "A" into Box1  --raw data
+  repeat for each line i in Box1  --repeat for each: requires 2nd container
+    get char 1 to 10 of i &","& char 11 to 20 of i &","& char 21 to -1 of i &return
+    put replaceText(it," *,",",") after Box2  --strip spaces before commas
+  end repeat
+  delete last char of Box2  --last return
+  put Box2 into fld "B"  --processed data
+end mouseUp
+----
+on preOpenStack  --access another stack's scripts
+  start using stack "subfolder/TheLib.rev"  --.rev, .livecode
+end preOpenStack
+----
+put the short name of image id 1003 into msg  --name of image
+----
+on mouseup  --strip all chars except alphanumeric and space
+  local AllowedChars, Box1, Box2
+  put "0123456789abcdefghijklmnopqrstuvwxyz " into AllowedChars
+  put fld "YourField" into Box1
+  repeat for each char i in Box1  --repeat for each: requires 2nd container
+     if i is in AllowedChars then put i after Box2
+  end repeat
+  put Box2 into fld "YourField"
+end mouseup
+----
+put the clipboardData["text"] into me  --clipboard contents
+--text -plain text
+--unicode -plain text in UTF-16 encoded using host byte order
+--styles - styled text in LiveCode internal styled-text format
+--html - styled text in LiveCode HTML format
+--rtf - styled text in LiveCode RTF format
+--image - the 'text' of an image object, binary data in PNG, GIF or JPEG
+----
+set the clipboardData to the clipBoardData["text"]  --remove formatting
+----
+play audioclip "Clip1.wav"  --2 seconds between clips
+wait until sound() = "done"
+wait 2 secs
+play audioclip "Clip2.wav"
+----
+repeat for each item i in "Bird.mp3,Cat.mp3,Toad.mp3"  --play in sequence
+  put specialFolderPath("documents") & "/Soundwavs/" & i) into tSndPath
+  play tSndPath
+  wait until sound() = "done"
+end repeat
+----
+put 7 <> 5 into msg  --returns true
+----
+Print Report or Print Form Overlay on 8.5 x 11 paper
+TextFont: Courier New (monospace required)
+PrintMargins: .5" (36,36,36,36)
+TextSize 7 = 128 chars/line, 79 lines/pg
+TextSize 9 = 97 chars/line, 60 lines/pg
+TextSize 10 = 89 chars/line, 55 lines/pg
+TextSize 11 = 80 chars/line, 51 lines/pg
+TextSize 12 = 74 chars/line, 45 lines/pg
+----
+Print Boundries For Portrait, Letter (8.5x11)
+printMargins 18 (.25"): UL=0,0  UR=576,0  LL=0,756  LR=576,756
+printMargins 36 (.50"):  UL=0,0  UR=540,0  LL=0,720  LR=540,720
+---
+(1) print text:
+revShowPrintDialog true,true  --page setup,print dialogs
+revPrintText it,,,the long name of fld "A"  --uses formatting of fld A
+
+(2) print field:
+revShowPrintDialog true,true
+revPrintField the long name of fld "A"
+
+(3) print card:
+open printing with dialog
+print this cd
+--print all cds of this stack
+close printing
+----
+on mouseUp  --print cards to pdf
+   answer "Print all cards in this stack to a pdf?" with "Cancel" or "OK"
+   if it = "Cancel" then exit to top
+   answer "Please select your" &&quote& "Print-To-PDF/XPS" &quote&& "program instead of your printer." &cr&cr& the availablePrinters with "OK"
+   set the printmargins to "18,18,18,18"  --L,T,R,B (18=.25", 36=.5", 72=1")
+   set the printPaperOrientation to "portrait"  --portrait, landscape
+   set the printRowsFirst to "true"  --true, false
+   set the printCardBorders to "true"  --true, false
+   set the printGutters to "18,18"  --h,v gutter around card (9=.125", 18=.25", 36=.5", 54=.75", 72=1")
+   set the printScale to (275/(the width of this stack))  --scale card for two cds wide (7.75/2*72=~275)
+   open printing with dialog  --start print job, spool cards
+   if result() = "Cancel" then exit to top
+   lock screen
+   push cd
+   repeat with i = 1 to number(cds in this stack)
+      print cd i of this stack
+   end repeat
+   --print this cd  --first cd, prev cd, this cd, next cd, any cd, 10 cds, cd 3 to 7, marked cds, print break
+   close printing  --end print job
+   pop cd
+   reset printing
+end mouseUp
+----
+on mouseUp  --print cards to pdf (pg = stack width,height)
+   local FilePath
+   answer "Print all cards of this stack to a pdf?" with "Cancel" or "OK"
+   if it = "Cancel" then exit to top
+   set the printPaperOrientation to "portrait"  --portrait, landscape
+   set the printPaperSize to the width of this stack,the height of this stack  --stack dimensions
+   set the printCardBorders to "true"  --true, false
+   put specialFolderPath("Desktop") &"/AllCards.pdf" into FilePath  --save to desktop
+   open printing to pdf FilePath  --create the pdf
+   if it = empty then exit to top
+   repeat with i = 1 to number(cds in this stack)
+      print cd i of this stack into 0,0,the width of this stack,the height of this stack  --stack dimensions
+      print break  --new page
+   end repeat
+   close printing
+   reset printing
+   launch document FilePath  --open with default pdf reader
+   if result() <> empty then answer "Sorry, couldn't open the pdf document." with "OK" titled "Error"
+end mouseUp
+----
+put "1,4,5,9,11,12" into PrintList  --print non-contiguous cds
+repeat with i = 1 to number(items in PrintList)
+   print cd (item i of PrintList)
+end repeat
+----
+on mouseUp  --print text to pdf, with text attributes
+if fld "A"= empty then
+   answer "Sorry, but there's nothing to print." with "OK"
+   exit to top
+else
+   answer "Print field" &&quote& "A" &quote&& "to a pdf?" with "Cancel" or "OK"
+   if it = "Cancel" then exit to top
+end if
+answer "Please select your" &&quote& "Print-To-PDF/XPS" &quote&& "program instead of your printer." &cr&cr& the availablePrinters with "OK"
+answer printer  --choose printer
+if result() = "Cancel" then exit to top
+lock screen  --hide font/size/style change
+set the cursor to watch
+set the textFont of fld "A" to "Courier New"  --monospace=Courier New, sans serif=Arial, serif=Century
+set the textSize of fld "A" to "11"  --7 to 14
+set the textStyle of fld "A" to "plain"
+set the printmargins to "36,36,36,36"  --L,T,R,B (18=.25", 36=.5", 72=1")
+set the printPaperOrientation to "portrait"  --portrait, landscape
+put fld "A" into TheText
+revShowPrintDialog false,false  --page setup, printer dialogs
+revPrintText TheText,,,the long name of fld "A"  --use fld "A" font/size/style
+set the textFont of fld "A" to empty  --reset back to default font/size/style
+reset printing
+end mouseUp
+----
+on mouseUp  --print cards
+answer "Print all cards in this stack?" with "Cancel" or "OK"
+if it = "Cancel" then exit to top
+answer "Is the printer on and paper ready to print?" with "Cancel" or "OK"
+if it = "Cancel" then exit to top
+set the printmargins to "18,18,18,18"  --L,T,R,B (18=.25", 36=.5", 72=1")
+set the printPaperOrientation to "portrait"  --portrait, landscape
+set the printRowsFirst to "true"  --true, false
+set the printCardBorders to "true"  --true, false
+set the printGutters to "18,18"  --h,v gutter around card (9=.125", 18=.25", 36=.5", 54=.75", 72=1")
+set the printScale to (275/(the width of this stack))  --scale card for two cds wide (7.75/2*72=~275)
+open printing with dialog  --start print job, spool cards
+if result() = "Cancel" then exit to top
+lock screen
+push cd
+repeat with i = 1 to number(cds in this stack)
+   print cd i of this stack
+end repeat
+--print this cd, print 10 cds, print cd 3 to 7, print break, print marked cds
+close printing  --end print job
+pop cd
+reset printing
+end mouseUp
+----
+Print the entire contents of a scrolling field by printing the card, setting the field's scroll to the first line of the pageHeights, printing the card again, setting the scroll to the current scroll plus line 2 of the pageHeights, etc.
+(Better to print the text of a scrolling field.)
+
+on mouseUp  --print card with scrolling field
+  local PgHeights
+  put the pageHeights of fld "A" into PgHeights
+  open printing
+  print cd
+  repeat with i = 1 to number(lines in PgHeights)
+    set the vScroll of fld "A" to the vScroll of fld "A" + line i of PgHeights
+    print cd
+  end repeat
+  close printing
+end mouseUp
+----
+on mouseUp  --print text, with text attributes
+   if fld "A"= empty then
+      answer "Sorry, but there's nothing to print." with "OK"
+      exit to top
+   else
+      answer "Print field" &&quote& "A" &quote&& "text?  (textFont: Courier New, textSize: 7)" with "Cancel" or "OK"
+      if it = "Cancel" then exit to top
+   end if
+   answer "Is the printer on and paper ready to print?" with "Cancel" or "OK"
+   if it = "Cancel" then exit to top
+   lock screen  --hide font/size/style change
+   set the textFont of fld "A" to "Courier New"
+   set the textSize of fld "A" to "7"
+   set the textStyle of fld "A" to "plain"
+   set the printmargins to "36,36,36,36"  --L,T,R,B 36=.5", 72=1"
+   set the printPaperOrientation to "portrait"  --portrait, landscape
+   put fld "A" into TheText
+   revShowPrintDialog false,false  --page setup, printer dialogs
+   revPrintText TheText,,,the long name of fld "A"  --use fld "A" font/size/style
+   --revPrintText TheText,,,the long name of fld "Text"  --use fld "Text" font/size/style
+   --revPrintText TheText,tab&"Confidential"  --centered header, no footer
+   --revPrintText fld "Info",,"prepared by John Smith"  --footer, no header
+   --revPrintText (the htmlText of fld "Info"),"Information",the time && the date  --use text's font/size/style
+   set the textFont of fld "A" to empty  --reset back to default font/size/style
+   reset printing
+end mouseUp
+----
+on mouseUp  --slot machine action on 4 lines ("1,2,3,4") in a locked fld.
+   put 20 into tScroll
+   put 16 into tDelay
+   repeat 10
+      set the vScroll of me to the vScroll of me + tScroll
+      wait tDelay
+      subtract 2 from tScroll
+      add 2 to tDelay
+   end repeat
+end mouseUp
+
+on mouseDown
+   local Accum
+   get last line of me
+   repeat with i = (it + 1) to (it + 40)
+      put i mod 10 &return after Accum
+   end repeat
+   put Accum into me
+end mouseDown
+----
+on mouseUp  --save graphic as jpg
+  ask file "Where to save the graphic?" with type "Graphic Files|jpg,png,gif|"
+  if it = empty then exit to top
+  export snapshot from group "MyChart" to it
+end mouseUp
+---
+on keydown X  --encrypt a field using custom prop cCurrentData
+   set the cCurrentData of me to the cCurrentData of me & X
+   put "•" after me
+end keydown
+
+on deleteKey
+   set the cCurrentData of me to char 1 to -2 of the cCurrentData of me
+   delete last char of me
+end deleteKey
+
+on backspaceKey
+   set the cCurrentData of me to char 1 to -2 of the cCurrentData of me
+   delete last char of me
+end backspaceKey
+
+--get the cCurrentData of fld "passwordField"  --text typed
+--put the cCurrentData of fld "passwordField" into tData
+--answer the cCurrentData of fld "passwordField" with "OK"
+----
+set the cEndTime of button "Session" to the long time  --create custom prop: the cEndTime
+----
+repeat with i = 1 to 1000  --repeat loop status
+  --do some action here
+  if i mod 100 = "0" then put i into fld "Status"
+end repeat
+----
+put 2.35 - trunc(2.35) into msg  --decimal portion .35
+put trunc(2.35) into msg  --integer portion 2
+if line 1 of msg is an integer then beep
+----
+on mouseUp  --hilite line 20 of a list fld
+  set the vScroll of fld "A" to (20 * (the textHeight of fld "A"))
+  set the hilitedLine of fld "A" to "20"
+end mouseUp
+----
+put the hilitedLines of fld "A" into msg  --item list (list fld property)
+put hilitedText(fld "A") into msg  --line list (list fld function)
+put value(clickLine()) into msg  --text of line
+put word 2 of clickLine() into msg  --line#
+----
+on mouseUp  --count words using an array
+  local tWordCount
+   get "This is a test. This is only a test. Additional info will follow."
+   repeat for each word i in it
+      if last char of i is in ".,?!quote" then delete last char of i  --remove punctuation
+      add 1 to tWordCount[i]  --array
+   end repeat
+   combine tWordCount using return and comma  --array to text
+   sort tWordCount by item 1 of each  --a-z
+   sort tWordCount descending numeric by item 2 of each  --occurrences
+   answer "The word count is:"&cr& tWordCount with "OK"
+end mouseUp
+----
+replaceText(fld "Stats",return,comma)  --lines to items
+replaceText(fld "Stats",comma,return)  --items to lines
+replace "," with ", " in X  --a,b,c  -> a, b, c
+replace return with comma & space in fld "A"  --lines to items
+replace cr& "StringToChange" with "ReplaceString" in Report  --replace "StringToChange" ONLY at beginning of line
+replace "Team" &i&cr with line i of Teams in Schedule  --prevent Team1 replacing Team10, Team11,...Team19
+----
+put item 2 of (word 3 of "a,b,c  i,j,k  x,y,z") into msg  --returns y
+----
+repeat for each line i in pendingMessages()
+  cancel (item 1 of i)  --cancel all pending messages sent in time
+end repeat
+repeat for each line i in movingControls()
+  stop moving i  --stop controls currently moving
+end repeat
+----
+put pendingMessages()  --list of current pending timer messages
+----
+put the script of me into TempScript  --change a script
+put "-- Last changed by Jane" && the short date into line 3 of TempScript
+set the script of me to TempScript
+----
+insert script of card "Library" into back  --script available to any handler
+----
+get value("myFunction(1,2,3)",card 1)  --use function outside msg path
+----
+repeat for each line i in X  --find longest line
+   if length(i) > Pad then put length(i) into Pad
+end repeat
+----
+find "marked" in fld "Forum"  --type in msg, hit returnKey, find in fld
+----
+on mouseUp  --find in fld
+  ask "Enter a word to find in field A." with "whatever"
+  if it = empty then exit to top
+  find it in fld "A"  --find, find chars, find word, find words, find whole, find string, find empty
+end mouseUp
+----
+function product FirstFactor,SecondFactor  --accomodate > 2 params
+  local TheProduct
+  put FirstFactor * SecondFactor into TheProduct
+  if paramCount() > "2" then
+    repeat with i = 3 to paramCount()
+       multiply TheProduct by param(i)
+    end repeat
+  end if
+  return TheProduct
+end product
+----
+on keyDown X -- prevent numbers
+  if X is an integer then beep
+  else pass keyDown
+end keyDown
+----
+on keyDown X  --prevent numbers or > 12 chars in fld
+  if X is in "1234567890" or length(me) > "12" then beep
+  else pass keyDown
+end keyDown
+----
+on keyDown X  --allow only numbers
+  if X is an integer then pass keyDown
+end keyDown
+----
+on mouseUp  --toggle between stack and modal dialog substack
+  if the hilite of me then topLevel this stack
+  else set the style of this stack to "modal"
+end mouseUp
+----
+toplevel stack "A"  --edit substack
+OR
+modal stack "A"  --substack as modal dialog (MUST have cancel or ok btn)
+OR
+palette stack "A"  --substack as palette
+----
+on mouseUp  --manage dialog with groups of controls
+  set the dialogData to "Item 2"
+  modal stack "Dialog1"  --trigger modal dialog with dialogData param
+end mouseUp
+
+on preOpenStack  --substack "Dialog1" stack script, reset btn to first tab
+    set the menuHistory of btn "TabMenu" of group "MyTabs" to "1"  --first tab
+end preOpenStack
+
+on menuPick X,Y  --menu btn script on dialog, show different control groups
+  show group X
+  hide group Y
+end menuPick
+----
+on menuPick ThisPick  --in tab btn script, if tab name = group name
+  repeat for each item i in "tab1,tab2,tab3"
+   hide group i
+  end repeat
+  show group ThisPick
+end menuPick
+----
+if keys(MyArray) <> empty then  --test for empty array
+----
+function sortArray Array1  --sort an array by keyname
+   local Array2,NewKey
+   get keys(Array1)  --array keynames into lines
+   sort lines of it by Array1[each]  --sort values of keys a-z
+   split it by return  --keynames back to array
+   put "1" into NewKey  --keys are 1,2,3,...n
+   repeat for each element i in it  --create new sorted array
+      put Array1[i] into Array2[NewKey]
+      add "1" to NewKey
+   end repeat
+   return Array2  --sorted a-z
+end sortArray
+----
+on preopenStack  --check if external loaded
+  local ExtName
+  if "External1" is not in the externalPackages of me then
+      get platform()
+      if it = "MacOS" then put ".bundle" into ExtName
+      else if it = "Win32" then put ".dll" into ExtName
+      else put ".so" into ExtName
+       answer file "Please select the external file: External1" & ExtName
+       if it = empty then
+           answer "Sorry, this stack will not work properly." with "OK"
+            exit to top
+        end if
+        set the externals of me to it  --update
+        save this stack  --save
+        send "revert" to me in 5 ticks  --quit, restart
+     end if
+--put whatever script you need
+end preopenStack
+----
+set the imageData of image id 1270 to the imageData of image id 1270  --smaller Ksize screen bitmap
+----
+on CreateThumb ImageID  --create 32x32 image for btn
+  local NewName  --declare local containers
+  put "Tmp 1" into NewName
+  repeat while there is an image NewName
+    add 1 to word 2 of NewName
+  end repeat
+  create image NewName
+  set the visible of image NewName to "true"
+  set the resizeQuality of image NewName to "best"
+  export snapshot from control id ImageID to image NewName as PNG
+  set the width of image NewName to "32"  --pixels
+  set the height of image NewName to "32"  --pixels
+  set the imageData of image NewName to the imageData of image NewName  --smaller Ksize screen bitmap
+  copy image NewName  --image into clipboard for pasting
+end CreateThumb
+----
+commandKey(), cmdKey(), controlKey(), and ctrlKey() functions are interchangeable synonyms in Mac/PC/Linux.
+commandKeyDown message is sent when a command key combination is pressed on Mac OR a control key combination is pressed on PC/Linux. There is no controlKeyDown message for PC and only for Linux under a specific condition.
+----
+on commandKeyDown pKey  --cmd-c = copy this script
+  if pKey = "c" then set the clipboardData["text"] to script of me
+  else pass commandKeyDown
+end commandKeyDown
+----
+on escapeKey -- escapeKey to stop runaway script
+  put the windows into tWindowsList
+  repeat for each line i in tWindowsList
+    if word 1 of the short name of stack i = "Bouncy" then send "stopMoving" to this cd of stack i
+  end repeat
+end escapeKey
+----
+on mouseUp
+  if shiftKey() = "down" then beep 2
+  else beep 1
+end mouseUp
+----
+on preOpenStack
+   set the hilitedTab of group "Tab" to "General"
+   enable group "Tab"
+end preOpenStack
+----
+on preOpenStack
+  open stack "Preferences Pane File" of this stack
+end preOpenStack
+----
+on PlayQue pList  --play sounds AND other scripts
+  repeat with i = 1 to number(items in pList)
+    play audioClip i 
+    wait until sound() = "done" with messages  --allow actions
+    wait 30 ticks with messages  --allow actions
+  end repeat 
+end PlayQue
+----
+wait until sound() = "done"  --no other actions
+wait until sound() = "done" with messages  --allow other actions
+wait 30 ticks with messages  --allow other actions
+----
