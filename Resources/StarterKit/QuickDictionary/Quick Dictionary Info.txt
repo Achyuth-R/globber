@@ -1,0 +1,5 @@
+Quick Dictionary & Quick Dictionary Kids
+An alternative dictionary for LC 8.1+.
+Keep Quick Dictionary stacks and api.sqlite database together in the same folder. Place anywhere. Documents folder or where your stacks are stored are good choices. Copy the newest api.sqlite database from:
+program files > runrev > [newest LC folder] > documentation > htmlviewer > resources > data > api > api.sqlite.
+----

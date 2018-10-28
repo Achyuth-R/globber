@@ -1,0 +1,69 @@
+function q1 tString
+   return "'" & tString & "'"
+end q1
+
+function q2 tString
+   return QUOTE & tString & QUOTE
+end q2
+---------------------------------------------------------------------
+
+fld "fid" of card "login" of stack "globber" 
+
+put fld "fid" of card "login" of stack "globber"
+put fld "ffnm" of card "login" of stack "globber"
+put fld "flnm" of card "login" of stack "globber"
+
+
+put the selectedtext of button "aoru"
+
+put line 1 of suid -- put line 1 of supwd   --put lineoffset("ra1", sunm) 
+put line (lineoffset("ra1", sunm)) of supwd
+
+
+command FillimstTxt
+
+   -- also loads imstcode[] imstname arrays
+   global mdbref 
+   global imsttxt
+   global imstCode, imstName, strimstcode, strimstname
+   put empty into imstcode -- array
+   put empty into imstname -- array
+   put empty into strimstcode -- string
+   put empty into strimstname -- string
+   
+   local ttxt, rct, cursref
+   put empty into ttxt
+   put "select icode, iname from imst" into TQ
+   put revQueryDataBase( mdbref, TQ ) into cursref
+   put the result into myresult
+   --put revquerydatabase ( mdbref, "select icode, iname from imst") into cursref
+   put revNumberofRecords(  cursref ) into rct
+   revMovetoFirstRecord  cursref 
+   local ticode, tiname
+   repeat with i = 1 to rct
+      -- fill 
+      put revDatabaseColumnNamed( cursref,  "iCode" 	 ) into ticode
+      put revDatabaseColumnNamed( cursref,  "iName" 	 ) into tiname
+      
+       -- put ticode into imstcode [ rct  ] -- some problem. not getting loaded. use str vars
+      -- put tiname into imstname [ rct  ]
+      
+      put ticode & return after strimstcode 
+      put tiname & return  after strimstname
+      
+      put ticode  & tab after ttxt
+      put tiname  & return after ttxt
+      
+      revMovetoNextRecord cursref
+   end repeat
+   --close cursor
+   revclosecursor  cursref 
+   put the result into myresult
+   put empty into cursref
+   put ttxt into imsttxt
+   -- put ttxt into fld "fitemtxt"
+   delete local ttxt 
+   delete local rct
+   delete local cursref
+      
+end fillimsttxt
